@@ -13,7 +13,7 @@ plot_configs = {'jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
                 'TagVarCSV_jetNSecondaryVertices':{"bins": np.arange(0, 10, 1) , "log": True},
                 'TagVarCSV_trackSumJetEtRatio':{"bins": np.linspace(0, 10, 10) , "log": True, "underflow": -999.},
                 'TagVarCSV_trackSumJetDeltaR':{"bins": np.linspace(0, 5, 10) , "log": True, "underflow": -999.},
-                'TagVarCSV_vertexCategory':{"bins": None , "log": True, "underflow": -999.},
+                'TagVarCSV_vertexCategory':{"bins": np.arange(0, 3, 1) , "log": True, "underflow": -999.},
                 'TagVarCSV_trackSip2dValAboveCharm':{"bins": np.linspace(-1., 0.2, 25) , "log": True, "underflow": -999.},
                 'TagVarCSV_trackSip2dSigAboveCharm':{"bins": np.linspace(-300., 400., 20) , "log": True, "underflow": -999.},
                 'TagVarCSV_trackSip3dValAboveCharm':{"bins": np.linspace(-2., 2., 15), "log": True, "underflow": -999.},
@@ -79,10 +79,14 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
         textstr = "Error"
     ax[0].text(0.8, 0.75, textstr, transform=ax[0].transAxes, fontsize=8,
                     verticalalignment='top', bbox=props)
+
+    bin_widths = np.diff(bin_centers) 
+    bin_widths = np.append(bin_widths, bin_widths[-1]) / 2.0
+
     ax[1].errorbar(
         bin_centers,
         ratios,
-        xerr=np.diff(bin_centers),
+        xerr=bin_widths,
         color="black",
         linestyle="None",
         marker=None,
