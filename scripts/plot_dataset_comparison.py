@@ -57,6 +57,11 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
     hist_online, bin_edges = np.histogram( online_data, bins=plot_configs[key]["bins"])
     hist_offline, bin_edges = np.histogram( offline_data, bins=plot_configs[key]["bins"])
 
+    error_online = 1./np.sqrt(hist_online)
+    error_offline = 1./np.sqrt(hist_offline)
+
+    ratio_error = np.sqrt( (error_online* 1./(hist_offline) ) **2 + ( error_offline * hist_online/(hist_offline **2)) **2 )
+
     ratios, bin_centers = compute_ratios(hist_online, hist_offline, bin_edges)
 
     ax[0].hist( online_data, bins = plot_configs[key]["bins"],  label = "Online $\mu=${0:1.2f} $\sigma$={1:1.2f}".format(np.mean(online_data), np.std(online_data)), color="red", alpha=0.5, density=True)
@@ -87,6 +92,7 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
         bin_centers,
         ratios,
         xerr=bin_widths,
+        yerr=ratio_error,
         color="black",
         linestyle="None",
         marker=None,
