@@ -51,7 +51,7 @@ def compute_ratios(hist_online, hist_offline, bin_edges):
 
 
 def plot_histogram(online_data, offline_data, key, name, category_name):
-    fig, ax = plt.subplots(2, 1)
+    fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]})
     fig.subplots_adjust(hspace=0)
 
     hist_online, bin_edges = np.histogram( online_data, bins=plot_configs[key]["bins"])
