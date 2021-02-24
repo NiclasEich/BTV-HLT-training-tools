@@ -41,7 +41,7 @@ plot_configs = {'jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
 def compute_ratios(hist_online, hist_offline, bin_edges):
     r_a = hist_online / np.sum(hist_online)
     r_b = hist_offline / np.sum(hist_offline)
-    ratios = (r_a - r_b) / (r_b + 1e-7)
+    ratios = r_a / (r_b + 1e-9)
 
     bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
     bin_widths = np.diff(bin_centers)
@@ -60,7 +60,7 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
     error_online = 1./np.sqrt(hist_online)
     error_offline = 1./np.sqrt(hist_offline)
 
-    ratio_error = np.sqrt( (error_online* 1./(hist_offline) ) **2 + ( error_offline * hist_online/(hist_offline **2)) **2 )
+    ratio_error = np.sqrt( (error_online* 1./(hist_offline) ) **2 + ( hist_online/(hist_offline **2)) **2 )
 
     ratios, bin_centers = compute_ratios(hist_online, hist_offline, bin_edges)
 
@@ -103,7 +103,7 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
     )
     ax[1].set_xlabel(key, fontsize=15)
     ax[1].set_ylim(
-        -1 *  0.5, 1.0 *  0.5)
+        0.5, 1.5)
 
     fig.savefig( os.path.join(plot_dir, "{}_{}.png".format(name, key)))
     plt.close()
