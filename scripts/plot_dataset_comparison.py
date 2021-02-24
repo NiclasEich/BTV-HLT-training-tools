@@ -7,6 +7,7 @@ from training_branches import key_lookup, DeepCSV_all_branches
 from training_branches import file_comparison
 from recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
+from matplotlib.ticker import AutoMinorLocator
 
 plot_configs = {'jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
                 'jet_eta':{"bins": np.linspace(-4.2, 4.2, 20) , "log": False},
@@ -97,15 +98,18 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
         linestyle="None",
         marker=None,
     )
-    ax[1].axhline(y=0.0, linestyle="dashed", color="grey", alpha=0.5)
+    ax[1].axhline(y=1.0, linestyle="dashed", color="grey", alpha=0.5)
+    ax[1].xaxis.set_minor_locator(AutoMinorLocator()) 
+    ax[1].tick_params(which='minor', length=4, color='black')
     ax[1].set_ylabel(
-        "$\\frac{{{0}-{1}}}{{{1}}}$".format("online", "offline")
+        "$\\frac{{{0}}}{{{1}}}$".format("online", "offline")
     )
     ax[1].set_xlabel(key, fontsize=15)
     ax[1].set_ylim(
         0.5, 1.5)
 
     fig.savefig( os.path.join(plot_dir, "{}_{}.png".format(name, key)))
+    fig.savefig( os.path.join(plot_dir, "{}_{}.pdf".format(name, key)))
     plt.close()
 
 parser = argparse.ArgumentParser()
