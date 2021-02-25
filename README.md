@@ -1,6 +1,12 @@
 # BTV-HLT-training-tools
 Collection of miscellaneous tools for the retraining of DeepCSV and DeepJet on online data for run 3 and phase 2.
 
+## Offline files
+
+The offline training files were provieded by Max Neukum and can be found  on lxplus here:
+
+`/afs/cern.ch/work/n/neich/public/max_files`
+
 
 ## Example
 
