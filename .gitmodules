@@ -1,0 +1,3 @@
+[submodule "DeepJet"]
+	path = DeepJet
+	url = https://github.com/NiclasEich/DeepJet.git
