@@ -7,7 +7,7 @@
 
 #### From Max Neukum, tagged deepntuplizer_11_2_pv3d_newTrackCollection
 ```shell
-/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/Online/Max_deepntuplizer_11_2_pv3d_newTrackCollection/
+/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/Offline/Max_deepntuplizer_11_2_pv3d_newTrackCollection/
 ```
 Description of files and names goes here.
 
