@@ -1,4 +1,4 @@
-executable              = run_deepjetcore3_lxplus_local.sh
+executable              = submit/job_training.sh
 arguments               = $(ClusterId)$(ProcId)
 output                  = out/sing.$(ClusterId).$(ProcId).out
 error                   = out/sing.$(ClusterId).$(ProcId).err

@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Condor output
+out/
+
 # C extensions
 *.so
 

@@ -25,7 +25,7 @@ python3 scripts/convert_events_to_jets.py -i /eos/home-s/sewuchte/BTV-Phase2/Dec
 
 ## Run Training
 
-The Software setup for converting the files and training the model is provided in a singularity container
+The Software setup for converting the files and training the model is provided in a singularity container (`/eos/home-j/jkiesele/singularity/images/deepjetcore3_latest.sif`)
 that needs to be started first.
 
 If you want everything to run locally.
@@ -53,6 +53,12 @@ the DJDC-dataformat.
 python3 DeepJetCore/bin/convertFromSource.py -i /path/to/offline_training_filelist.txt -o /path/to/offline_djdc_files -c TrainData_DeepCSV
 ```
 
+It might be possible that you need to raise your ulimit if there are too many files that need to be processed:
+
+```shell
+ulimit -n 4096
+```
+
 ### Second run Training script
 
 Then you can run the Training
@@ -65,7 +71,7 @@ python3 DeepJet/Train/train_DeepCSV.py offline_djdc_files/dataCollection.djcdc o
 
 
 ```shell
-ipython3 DeepJetCore/bin/predict.py /KERAS_model.h5 offline_djdc_files/dataCollection.djcdc offline_training_files/offline_training_test_filelist.txt offline_results/prediction
+python3 DeepJetCore/bin/predict.py /KERAS_model.h5 offline_djdc_files/dataCollection.djcdc offline_training_files/offline_training_test_filelist.txt offline_results/prediction
 ```
 
 Create ROC-curve
