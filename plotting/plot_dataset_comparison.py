@@ -5,7 +5,7 @@ import os
 import argparse
 from training_branches import key_lookup, DeepCSV_all_branches 
 from training_branches import file_comparison
-from recalculate_flightDistance import recalculate_flightDistance
+from scripts.recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
 from matplotlib.ticker import AutoMinorLocator
 

@@ -36,7 +36,7 @@ kt = "PuppiJet.TagVar_trackPtRel"
 track_key_indicator = "PuppiJet.TagVar_"
 
 N_jets = -1 
-print("running on {} events!".format(N_jets))
+print("running on {} events!".format(N_jets if N_jets != -1 else "all"))
 
 branch_dict = {}
 branch_registration = {}
