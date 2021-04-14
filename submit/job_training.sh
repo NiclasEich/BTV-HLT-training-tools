@@ -14,4 +14,4 @@ $sing exec -B /eos \
            --bind /usr/vice/etc:/usr/vice/etc  \
            --nv \
            /eos/home-j/jkiesele/singularity/images/deepjetcore3_latest.sif \
-           /afs/cern.ch/work/n/neich/private/BTV-HLT-training-tools/submit/commands_training.sh
+           $BTVHLTToolsDirectory/submit/commands_training.sh
