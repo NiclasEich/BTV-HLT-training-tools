@@ -64,21 +64,47 @@ def compute_ratios(hist_online, hist_offline, bin_edges):
     return ratios, bin_centers
 
 def plot_histogram(datasets, dataset_names, key, name, category_name):
-    fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]})
     fig.subplots_adjust(hspace=0)
 
-    for i_hist, (dataset, name) in enumerate(zip(datasets, dataset_names)):
+    for i_hist, (dataset, name, colour) in enumerate(zip(datasets, dataset_names, ["black", "orange", "blue"])):
         if name == "default": 
-            hatch ="/"
+            counts, bin_edges = np.histogram(dataset,bins = plot_configs[key]["bins"], density=True )
+            bin_centers = (bin_edges[:-1] + bin_edges[1:])/2.
+            ax[0].errorbar(bin_centers, counts, marker="o", color="black", linestyle="none", label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)))
         else:
             hatch = None
-        ax.hist(dataset, bins = plot_configs[key]["bins"], label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)), alpha=0.5, density=True, hatch=hatch)
-    ax.legend()
+            counts_comp, bin_edges = np.histogram(dataset,bins = plot_configs[key]["bins"], density=True )
+            # bin_centers = (bin_edges[:-1] + bin_edges[1:])/2.
+            ax[0].hist(dataset, bins = plot_configs[key]["bins"], color=colour, label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)), alpha=0.5, density=True, hatch=hatch)
+            ax[1].errorbar(
+                bin_centers,
+                counts_comp/counts,
+                # xerr=bin_widths,
+                # yerr=ratio_error,
+                color=colour,
+                linestyle="None",
+                marker="o",
+            )
+    ax[0].legend()
     if plot_configs[key]["log"] is True:
-        ax.set_yscale('log')
-    ax.set_ylabel("N, normalized", fontsize=15)
-    ax.set_title("{}\n{}".format(name, category_name), fontsize=15)
-    ax.grid(which='both', axis='y',linestyle="dashed")
+        ax[0].set_yscale('log')
+    ax[0].set_ylabel("N, normalized", fontsize=15)
+    ax[0].set_title("{}\n{}".format(name, category_name), fontsize=15)
+    ax[0].grid(which='both', axis='y',linestyle="dashed")
+
+    ax[1].axhline(y=1.0, linestyle="dashed", color="grey", alpha=0.5)
+    ax[1].xaxis.set_minor_locator(AutoMinorLocator()) 
+    ax[1].tick_params(which='minor', length=4, color='black')
+    ax[1].set_ylabel(
+        "$\\frac{{{0}}}{{{1}}}$".format("JetAlgo","default")
+    )
+
+    ax[1].set_xlabel(key, fontsize=15)
+    ax[1].set_ylim(
+        0.5, 1.5)
+    ax[0].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
+    ax[1].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
 
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     # place a text box in upper left in axes coords
@@ -90,13 +116,13 @@ def plot_histogram(datasets, dataset_names, key, name, category_name):
     except ValueError as e:
         print(e)
         textstr = "Error"
-    ax.text(0.8, 0.75, textstr, transform=ax.transAxes, fontsize=8,
+    ax[0].text(0.8, 0.75, textstr, transform=ax[0].transAxes, fontsize=8,
                     verticalalignment='top', bbox=props)
 
 
 
-    fig.savefig( os.path.join(plot_dir, "{}_{}.pdf".format(name, key)))
-    fig.savefig( os.path.join(plot_dir, "{}_{}.png".format(name, key)))
+    fig.savefig( os.path.join(plot_dir, "{}.pdf".format(key)))
+    fig.savefig( os.path.join(plot_dir, "{}.png".format(key)))
     plt.close()
 
 parser = argparse.ArgumentParser()
@@ -114,20 +140,20 @@ process_name = offline_file.split("/")[-1].split(".")[0]
 base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
 os.makedirs(base_dir, exist_ok=True)
 
+print("Opening File")
 offline_tree = u3.open(offline_file)["btagana"]["ttree"]
+print("successfully opened file!")
 
 plot_keys = key_lookup.keys()
 
 offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDistance2dSig", "TagVarCSV_flightDistance3dVal", "TagVarCSV_flightDistance3dSig"]
-
-# category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
-# categories = [ ['isB'], ['isBB', 'isGBB'], ['isLeptonicB', 'isLeptonicB_C'], ['isC', 'isCC', 'isGCC'], ['isUD', 'isS'], ['isG'], ['isB','isBB', 'isGBB', 'isLeptonicB', 'isLeptonicB_C', 'isC', 'isCC', 'isGCC','isUD', 'isS', 'isG']]
 
 categories = ["all"]
 category_names = ["all"]
 
 dataset_names = ["", "PuppiJet.", "CaloJet."]
 
+print("Start plotting loop")
 for cat, cat_name in zip(categories, category_names):
     plot_dir = os.path.join( base_dir, cat_name )
     os.makedirs(plot_dir, exist_ok=True)
