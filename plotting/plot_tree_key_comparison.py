@@ -9,6 +9,7 @@ from scripts.recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
 from matplotlib.ticker import AutoMinorLocator
 from IPython import embed
+from scripts.online_branches import branch_names
 
 plot_configs = {'Jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
                 'Jet_eta':{"bins": np.linspace(-4.2, 4.2, 20) , "log": False},
@@ -52,42 +53,38 @@ plot_configs = {'Jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
                 "Jet_isG": {"bins": np.linspace(0, 1.1, 15), "log": True},
                 }
 
-def compute_ratios(hist_online, hist_offline, bin_edges):
-    r_a = hist_online / np.sum(hist_online)
-    r_b = hist_offline / np.sum(hist_offline)
-    ratios = r_a / (r_b + 1e-9)
+plot_config_default = {"bins": 40,
+                       "log": True}
 
-    bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
-    bin_widths = np.diff(bin_centers)
-    bin_widths = np.append(bin_widths, bin_widths[-1]) / 2.0
-
-    return ratios, bin_centers
-
-def plot_histogram(datasets, dataset_names, key, name, category_name):
+def plot_histogram(datasets, dataset_names, key, name, category_name, target_dir):
     fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]})
     fig.subplots_adjust(hspace=0)
 
     for i_hist, (dataset, name, colour) in enumerate(zip(datasets, dataset_names, ["black", "orange", "blue"])):
+        if not np.isfinite(dataset).all():
+            print("Debugging: Non finite value detected in {}.{}".format(name, key))
+        if np.array( dataset ).size == 0:
+            print("Array {}.{} is empty!".format(name, key))
+            continue
         if name == "default": 
-            counts, bin_edges = np.histogram(dataset,bins = plot_configs[key]["bins"], density=True )
+            counts, bin_edges = np.histogram(dataset, bins = plot_configs.get(key, plot_config_default)["bins"], density=True )
             bin_centers = (bin_edges[:-1] + bin_edges[1:])/2.
             ax[0].errorbar(bin_centers, counts, marker="o", color="black", linestyle="none", label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)))
         else:
             hatch = None
-            counts_comp, bin_edges = np.histogram(dataset,bins = plot_configs[key]["bins"], density=True )
+            counts_comp, bin_edges = np.histogram(dataset, bins = plot_configs.get(key, plot_config_default)["bins"], density=True )
             # bin_centers = (bin_edges[:-1] + bin_edges[1:])/2.
-            ax[0].hist(dataset, bins = plot_configs[key]["bins"], color=colour, label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)), alpha=0.5, density=True, hatch=hatch)
+            ax[0].hist(dataset, bins = plot_configs.get(key, plot_config_default)["bins"], color=colour, label = "{0} $\mu=${1:1.2f} $\sigma$={2:1.2f}".format(name, np.mean(dataset), np.std(dataset)), alpha=0.5, density=True, hatch=hatch)
+            ratios = np.zeros(len(counts))
             ax[1].errorbar(
                 bin_centers,
-                counts_comp/counts,
-                # xerr=bin_widths,
-                # yerr=ratio_error,
+                np.divide( counts_comp, counts, out=ratios, where=counts!=0),
                 color=colour,
                 linestyle="None",
                 marker="o",
             )
     ax[0].legend()
-    if plot_configs[key]["log"] is True:
+    if plot_configs.get(key, plot_config_default)["log"] is True:
         ax[0].set_yscale('log')
     ax[0].set_ylabel("N, normalized", fontsize=15)
     ax[0].set_title("{}\n{}".format(name, category_name), fontsize=15)
@@ -103,13 +100,14 @@ def plot_histogram(datasets, dataset_names, key, name, category_name):
     ax[1].set_xlabel(key, fontsize=15)
     ax[1].set_ylim(
         0.5, 1.5)
-    ax[0].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
-    ax[1].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
+    if plot_configs.get(key, None) is not None:
+        ax[0].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
+        ax[1].set_xlim(plot_configs[key]["bins"][0],plot_configs[key]["bins"][-1])
 
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     # place a text box in upper left in axes coords
     try:
-        textstr = "Hello :)"
+        textstr = "Debugging Work!"
         # textstr = "Online:\nmin {0:1.2f}\nmax {1:1.2f}\nOffline:\nmin {2:1.2f}\nmax {3:1.2f}".format( np.min(online_data), np.max(online_data), np.min(offline_data), np.max(offline_data))
         # if tot_underflows != None:
             # textstr += "\nUnderflows: {}".format(tot_underflows)
@@ -121,8 +119,8 @@ def plot_histogram(datasets, dataset_names, key, name, category_name):
 
 
 
-    fig.savefig( os.path.join(plot_dir, "{}.pdf".format(key)))
-    fig.savefig( os.path.join(plot_dir, "{}.png".format(key)))
+    fig.savefig( os.path.join(target_dir, "{}.pdf".format(key)))
+    fig.savefig( os.path.join(target_dir, "{}.png".format(key)))
     plt.close()
 
 parser = argparse.ArgumentParser()
@@ -151,7 +149,8 @@ offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDista
 categories = ["all"]
 category_names = ["all"]
 
-dataset_names = ["", "PuppiJet.", "CaloJet."]
+# dataset_names = ["", "PuppiJet.", "CaloJet."]
+dataset_names = ["", "PuppiJet."]
 
 print("Start plotting loop")
 for cat, cat_name in zip(categories, category_names):
@@ -160,30 +159,34 @@ for cat, cat_name in zip(categories, category_names):
 
     # offline_mask = reduce(np.logical_or , [ offline_tree[k].array() == 1 for k in cat])
 
-    # offline_mask = off_pt_mask & offline_mask
-
-    for key  in plot_configs.keys():
+    for key in branch_names:
         try:
             data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
-        except:
-            print("error during key:\t{}".format(key))
-            embed()
+            # if "DeepFlavourInput" in key:
+                # dset_names = ["default", "PuppiJet"]
+                # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names[0:2]]
+            # else:
+                # dset_names = ["default", "PuppiJet", "CaloJet"]
+                # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
+        except KeyError as e:
+            print(e)
+            print("Error during key:\t{}".format(key))
+            print("Exiting...")
+            quit() 
 
-        # if key in offline_cleaning_keys:
-            # offline_data = recalculate_flightDistance(offline_tree, key)
+        if plot_configs.get(key, None) is not None:
+            if plot_configs[key].get("underflow", False) is not False:
+                masks = [ d != plot_configs[key]["underflow"] for d in data]
+                data = [ d[m] for d,m in zip(data, masks) ]
 
-        print("key:\t", key)
-        # if "vertex" in key:
-            # print("Setting Values to 0:\nOnline:\t{}\nOffline:\t{}".format(sum(np.invert(on_nSV_mask)), sum(np.invert(off_nSV_mask))))
-            # online_data[np.invert(on_nSV_mask)] *= 0.
-            # offline_data[np.invert(off_nSV_mask)] *= 0.
-
-        # online_data = online_data[online_mask].flatten()
-        # offline_data = offline_data[offline_mask].flatten()
-
-        if plot_configs[key].get("underflow", False) is not False:
-            masks = [ d != plot_configs[key]["underflow"] for d in data]
-            data = [ d[m] for d,m in zip(data, masks) ]
-
-        print("Starting plotting")
-        plot_histogram(data, ["default", "PuppiJet", "CaloJet"], key, process_name, cat_name)
+        if "DeepFlavourInput" in key:
+            dir_tag= "DeepFlavourInput"
+        elif "TagVarCSV" in key:
+            dir_tag= "TagVarCSV"
+        else:
+            dir_tag= "default"
+        target_dir = os.path.join(plot_dir, dir_tag)
+        os.makedirs(target_dir, exist_ok=True)
+        plot_histogram(data, ["default", "PuppiJet"], key, process_name, cat_name, target_dir)
+print("Done!")
+print("Saved plots to:\n{}".format(plot_dir))
