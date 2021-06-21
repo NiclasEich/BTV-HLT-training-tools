@@ -6,6 +6,9 @@ unset LD_LIBRARY_PATH
 unset PYTHONPATH
 sing=`which singularity`
 unset PATH
+echo "BTVHLTToolesdirectory:"
+echo $BTVHLTToolsDirectory
+echo $(pwd)
 echo "If you see the following error: \"container creation failed: mount /proc/self/fd/10->/var/singularity/mnt/session/rootfs error ...\" please just try again"
 $sing exec -B /eos \
            -B /afs \

@@ -3,7 +3,7 @@ import uproot3 as u3
 import os
 import argparse
 import numpy as np
-from training_branches import key_lookup, DeepCSV_all_branches 
+from training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys
 from training_branches import file_comparison
 from scripts.recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
