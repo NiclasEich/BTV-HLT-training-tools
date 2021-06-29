@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 matplotlib.use('Agg')
 
-out_dir = "./offline_results/new_preprocessing_18/prediction/"
+out_dir = "./training_output/_pred/"
 
 larger = 28 
 large = 26

@@ -6,6 +6,7 @@ export BTVHLTTrainingFile=/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/O
 export OfflineDirectory=/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/Offline/Max_deepntuplizer_11_2_pv3d_newTrackCollection/pu140/
 export OfflineTrainingFiles=${OfflineDirectory}/djdc_files/${TrainingVersion}/dataCollection.djdc
 export OnlineDirectory=/eos/user/n/neich/HLT_BTV/nTuples/TRKRun3/jet_shaped_2
+export OnlineTrainingFiles=${OnlineDirectory}/djdc_files/${TrainingVersion}/dataCollection.djcdc
 source $BTVHLTToolsDirectory/DeepJet/env.sh
 export PYTHONPATH=$BTVHLTToolsDirectory:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore:$PYTHONPATH
