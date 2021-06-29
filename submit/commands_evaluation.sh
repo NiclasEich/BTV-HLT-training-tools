@@ -8,4 +8,6 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 echo "current path:"
 pwd
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/$TrainingVersion/KERAS_model.h5 $OfflineTrainingfiles $OfflineDirectory/training_filelist.txt $TrainingOutput/${Training_Version}_pred
+#echo "python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/$TrainingVersion/KERAS_model.h5 $OnlineTrainingfiles $OnlineDirectory/training_filelist.txt $TrainingOutput/${Training_Version}_pred"
+#python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py -h
+python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/$TrainingVersion/KERAS_model.h5 $OnlineTrainingFiles $OnlineDirectory/training_filelist.txt $TrainingOutput/${Training_Version}_pred
