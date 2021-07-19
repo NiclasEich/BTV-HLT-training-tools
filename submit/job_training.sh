@@ -4,6 +4,7 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 unset LD_LIBRARY_PATH
 unset PYTHONPATH
+source /afs/cern.ch/work/n/neich/private/BTV-HLT-training-tools/setup.sh
 sing=`which singularity`
 unset PATH
 echo "If you see the following error: \"container creation failed: mount /proc/self/fd/10->/var/singularity/mnt/session/rootfs error ...\" please just try again"

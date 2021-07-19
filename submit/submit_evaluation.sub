@@ -1,4 +1,4 @@
-executable              = submit/job_evaluation.sh
+executable              = $ENV(BTVHLTToolsDirectory)/submit/job_evaluation.sh
 arguments               = $(ClusterId)$(ProcId)
 output                  = $ENV(TrainingOutput)/sing.$(ClusterId).$(ProcId).out
 error                   = $ENV(TrainingOutput)/sing.$(ClusterId).$(ProcId).err
