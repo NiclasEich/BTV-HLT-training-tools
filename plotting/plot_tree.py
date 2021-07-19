@@ -3,8 +3,7 @@ import uproot3 as u3
 import os
 import argparse
 import numpy as np
-from training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys
-from training_branches import file_comparison
+from scripts.training_branches import key_lookup, DeepCSV_all_branches, new_ntuple_keys,file_comparison
 from scripts.recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
 from matplotlib.ticker import AutoMinorLocator
@@ -55,11 +54,11 @@ def plot_histogram(online_data, key, name, category_name):
     fig, ax = plt.subplots(1, 1)
     fig.subplots_adjust(hspace=0)
 
-    hist_online, bin_edges = np.histogram( online_data, bins=plot_configs[key]["bins"])
+    hist_online, bin_edges = np.histogram( online_data, bins=plot_configs.get(key, {"bins": 20})["bins"])
 
-    ax.hist( online_data, bins = plot_configs[key]["bins"],  label = "Online $\mu=${0:1.2f} $\sigma$={1:1.2f}".format(np.mean(online_data), np.std(online_data)), color="red", alpha=0.5, density=True)
+    ax.hist( online_data, bins = plot_configs.get(key,{"bins": 20} )["bins"],  label = "Online $\mu=${0:1.2f} $\sigma$={1:1.2f}".format(np.mean(online_data), np.std(online_data)), color="red", alpha=0.5, density=True)
     ax.legend()
-    if plot_configs[key]["log"] is True:
+    if plot_configs.get(key, {"log": False})["log"] is True:
         ax.set_yscale('log')
     ax.set_ylabel("N, normalized", fontsize=15)
     ax.set_title("{}\n{}".format(name, category_name), fontsize=15)
@@ -103,35 +102,42 @@ online_tree =  u3.open(online_file)["ttree"]
 
 plot_keys = key_lookup.keys()
 
-online_jet_pt = online_tree[key_lookup["jet_pt"]].array()
+# online_jet_pt = online_tree[key_lookup["jet_pt"]].array()
+online_jet_pt = online_tree["Jet_pt"].array()
 
-on_pt_mask = (online_jet_pt > 25.) & (online_jet_pt < 1000.)
+# on_pt_mask = (online_jet_pt > 25.) & (online_jet_pt < 1000.)
+on_pt_mask = (online_jet_pt > 0.)
 
-online_nSV = online_tree[key_lookup["TagVarCSV_jetNSecondaryVertices"]].array()
+# online_nSV = online_tree[key_lookup["TagVarCSV_jetNSecondaryVertices"]].array()
+online_nSV = online_tree["TagVarCSV_jetNSecondaryVertices"].array()
 
-on_nSV_mask = online_nSV > 0
+on_nSV_mask = online_nSV >= 0
 
 
 category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
-categories = [ ['isB'], ['isBB', 'isGBB'], ['isLeptonicB', 'isLeptonicB_C'], ['isC', 'isCC', 'isGCC'], ['isUD', 'isS'], ['isG'], ['isB','isBB', 'isGBB', 'isLeptonicB', 'isLeptonicB_C', 'isC', 'isCC', 'isGCC','isUD', 'isS', 'isG']]
+# categories = [ ['isB'], ['isBB', 'isGBB'], ['isLeptonicB', 'isLeptonicB_C'], ['isC', 'isCC', 'isGCC'], ['isUD', 'isS'], ['isG'], ['isB','isBB', 'isGBB', 'isLeptonicB', 'isLeptonicB_C', 'isC', 'isCC', 'isGCC','isUD', 'isS', 'isG']]
+categories = [ ['Jet_isB'], ['Jet_isBB', 'Jet_isGBB'], ['Jet_isLeptonicB', 'Jet_isLeptonicB_C'], ['Jet_isC', 'Jet_isCC', 'Jet_isGCC'], ['Jet_isUD', 'Jet_isS'], ['Jet_isG'], ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
 
 for cat, cat_name in zip(categories, category_names):
     plot_dir = os.path.join( base_dir, cat_name )
     os.makedirs(plot_dir, exist_ok=True)
 
-    online_mask = reduce(np.logical_or , [ online_tree[key_lookup[k]].array() == 1 for k in cat])
+    # online_mask = reduce(np.logical_or , [ online_tree[key_lookup[k]].array() == 1 for k in cat])
+    online_mask = reduce(np.logical_or , [ online_tree[k].array() == 1 for k in cat])
 
     online_mask = on_pt_mask & online_mask
 
-    for key  in plot_configs.keys():
-        online_data = online_tree[key_lookup[key]].array()
+    # for key  in plot_configs.keys():
+    for key  in new_ntuple_keys:
+        if key in list(map(lambda x: x.decode("utf-8"), online_tree.keys())):
+            online_data = online_tree[key].array()
 
-        # print("key:\t", key)
-        # if "vertex" in key:
-            # print("Setting Values to 0:\nOnline:\t{}\nOffline:\t{}".format(sum(np.invert(on_nSV_mask)), sum(np.invert(off_nSV_mask))))
-            # online_data[np.invert(on_nSV_mask)] *= 0.
+            print("key:\t", key)
+            # if "vertex" in key:
+                # print("Setting Values to 0:\nOnline:\t{}\nOffline:\t{}".format(sum(np.invert(on_nSV_mask)), sum(np.invert(off_nSV_mask))))
+                # online_data[np.invert(on_nSV_mask)] *= 0.
 
-        online_data = online_data[online_mask].flatten()
+            online_data = online_data[online_mask].flatten()
 
-        print("Starting plotting")
-        plot_histogram(online_data, key, process_name, cat_name)
+            print("Starting plotting")
+            plot_histogram(online_data, key, process_name, cat_name)

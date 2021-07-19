@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 matplotlib.use('Agg')
 
-out_dir = "./training_output/_pred/"
+out_dir = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion")+"_pred/")
 
 larger = 28 
 large = 26
@@ -31,11 +31,13 @@ _params = {
 }
 plt.rcParams.update(_params)
 
-file_name = "ROCS_DeepCSV.root"
+file_name = os.path.join(out_dir, "ROCS_DeepCSV.root")
 tree = uproot3.open(os.path.join(out_dir, file_name))
 
 roc_0 = tree["roccurve_0"]
 roc_1 = tree["roccurve_1"]
+roc_2 = tree["roccurve_2"]
+roc_3 = tree["roccurve_3"]
 
 x_0 = roc_0.xvalues
 y_0 = roc_0.yvalues
@@ -43,9 +45,18 @@ y_0 = roc_0.yvalues
 x_1 = roc_1.xvalues
 y_1 = roc_1.yvalues
 
+x_0_DeepCSV = roc_2.xvalues
+y_0_DeepCSV = roc_2.yvalues
+# from IPython import embed;embed()
+
+x_1_DeepCSV = roc_3.xvalues
+y_1_DeepCSV = roc_3.yvalues
+
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
-ax.plot(x_1, y_1, label="b vs c", color="green")
 ax.plot(x_0, y_0, label="b vs udsg", color="red")
+ax.plot(x_0_DeepCSV, y_0_DeepCSV, label="b vs udsg Offline-DeepCSV", color="red", linestyle="dashed")
+ax.plot(x_1, y_1, label="b vs c", color="green")
+ax.plot(x_1_DeepCSV, y_1_DeepCSV, label="b vs c Offline-DeepCSV", color="green", linestyle="dashed")
 ax.set_title("RocCurve DeepCSV", fontsize=24)
 ax.set_xlabel("b-id. efficency")
 ax.yaxis.set_ticks_position('both')

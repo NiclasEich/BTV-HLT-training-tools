@@ -3,9 +3,11 @@ import ast
 import argparse
 import matplotlib.pyplot as plt
 
+default_out = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion"))
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--input", "-i", help="Input directory with the full_info.log file", type=str)
-parser.add_argument("--output", "-j", help="Output directory for the plots", type=str)
+parser.add_argument("--input", "-i", help="Input directory with the full_info.log file", type=str, default=default_out)
+parser.add_argument("--output", "-j", help="Output directory for the plots", type=str, default=default_out)
 args = parser.parse_args()
 
 out_dir = args.output
@@ -24,8 +26,8 @@ loss_train =[ h['loss'] for h in history]
 loss_val =[ h['val_loss'] for h in history]
 accuracy_train =[ h['accuracy'] for h in history]
 accuracy_val =[ h['val_accuracy'] for h in history]
-auc_train =[ h['auc'] for h in history]
-auc_val =[ h['val_auc'] for h in history]
+# auc_train =[ h['auc'] for h in history]
+# auc_val =[ h['val_auc'] for h in history]
 
 ax_epochs = range(0, len(history))
 
@@ -54,13 +56,13 @@ ax2.legend()
 fig2.savefig(os.path.join(out_dir, "loss.png"))
 
 
-fig3, ax3 = plt.subplots(1, 1, figsize=(15, 10))
-ax3.plot(ax_epochs, auc_train, color='g', label='Training AUC')
-ax3.plot(ax_epochs, auc_val, color='b', label='Validation AUC')
-ax3.grid(True, "both", linestyle="dashed")
-ax3.set_title('AUC DeepCSV-Test')
-ax3.set_xlabel('Epochs')
-ax3.set_ylabel('loss')
-ax3.set_yscale('log')
-ax3.legend()
-fig3.savefig(os.path.join(out_dir, "auc.png"))
+# fig3, ax3 = plt.subplots(1, 1, figsize=(15, 10))
+# ax3.plot(ax_epochs, auc_train, color='g', label='Training AUC')
+# ax3.plot(ax_epochs, auc_val, color='b', label='Validation AUC')
+# ax3.grid(True, "both", linestyle="dashed")
+# ax3.set_title('AUC DeepCSV-Test')
+# ax3.set_xlabel('Epochs')
+# ax3.set_ylabel('loss')
+# ax3.set_yscale('log')
+# ax3.legend()
+# fig3.savefig(os.path.join(out_dir, "auc.png"))
