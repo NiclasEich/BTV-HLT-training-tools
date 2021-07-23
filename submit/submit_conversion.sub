@@ -9,6 +9,6 @@ request_GPUs = 1
 request_CPUs = 1
 getenv = True
 +JobFlavour = "tomorrow"
-+SingularityImage = "/eos/home-j/jkiesele/singularity/images/deepjetcore3_latest.sif"
++SingularityImage = "/nfs/dust/cms/user/sewuchte/public/deepjetcore3_latest.sif"
 queue
 

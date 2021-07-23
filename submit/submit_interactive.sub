@@ -8,6 +8,6 @@ when_to_transfer_output = ON_EXIT
 request_GPUs = 1
 request_CPUs = 1
 +JobFlavour = "tomorrow"
-+SingularityImage = "/eos/home-j/jkiesele/singularity/images/deepjetcore3_latest.sif"
++SingularityImage = "/nfs/dust/cms/user/sewuchte/public/deepjetcore3_latest.sif"
 queue
 
