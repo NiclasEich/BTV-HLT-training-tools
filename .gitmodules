@@ -3,4 +3,4 @@
 	url = https://github.com/NiclasEich/DeepJet.git
 [submodule "DeepJetCore"]
 	path = DeepJetCore
-	url = https://github.com/DL4Jets/DeepJetCore.git
+	url = https://github.com/NiclasEich/DeepJetCore.git 
