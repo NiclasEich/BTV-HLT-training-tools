@@ -2,7 +2,7 @@
 echo "Pythonpath:"
 echo $PYTHONPATH
 echo "Sourcing DeepJet env"
-source /afs/cern.ch/work/n/neich/private/BTV-HLT-training-tools/setup.sh
+source ${BTVHLTToolsDirectory}/setup.sh
 echo "Starting Training"
 echo "Pythonpath:"
 echo $PYTHONPATH

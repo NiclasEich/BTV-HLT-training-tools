@@ -1,18 +1,19 @@
 # get basedirectory
 export BTVHLTToolsDirectory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # source DeepJet env
-export TrainingVersion="test_15"
-export BTVHLTTrainingFile=/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/Online/HLTTDR_February2021/HLT_TRKv00_default/jet_shaped_2
-export OfflineDirectory=/eos/cms/store/group/phys_btag/HLTRetraining/PhaseII/Offline/Max_deepntuplizer_11_2_pv3d_newTrackCollection/pu140/
-export OfflineTrainingFiles=${OfflineDirectory}/djdc_files/${TrainingVersion}/dataCollection.djdc
-export OnlineDirectory=/afs/cern.ch/work/n/neich/public/online_ntuples/TRKRun3/jet_shaped_splitted_test
-#export OnlineTrainingFiles=${OnlineDirectory}/djdc_files/${TrainingVersion}/dataCollection.djcdc
-export OnlineTrainingFiles=${OnlineDirectory}/djdc_files/test_14/dataCollection.djcdc
+
+export TrainingVersion="test_01"
+export OnlineDirectory=/nfs/dust/cms/user/neich/BTV/Trainings
+export OnlineTrainingFiles=/nfs/dust/cms/user/neich/BTV/Trainings/djdc_files/${TrainingVersion}/dataCollection.djcdc
 export OnlineEvaluationFiles=${OnlineDirectory}/evaluation_filelist.txt
 source $BTVHLTToolsDirectory/DeepJet/env.sh
+
 export PYTHONPATH=$BTVHLTToolsDirectory:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$PYTHONPATH
+export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore/conversion:$PYTHONPATH
+export PYTHONPATH=$BTVHLTToolsDirectory/DeepJet/modules:$PYTHONPATH
+export PYTHONPATH=$BTVHLTToolsDirectory/DeepJet/modules/models:$PYTHONPATH
 
 export LD_LIBRARY_PATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$LD_LIBRARY_PATH
 
@@ -23,6 +24,7 @@ else
     echo "No local_setup.sh found! Using defaults for env vars"
 fi
 
+export TrainingOutput=/nfs/dust/cms/user/neich/BTV/Trainings
 
 if [ -z "$TrainingOutput" ]
 then

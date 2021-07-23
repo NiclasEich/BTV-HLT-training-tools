@@ -24,7 +24,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--infile", "-i", help="Input root-file", type=str)
 parser.add_argument("--offline", "-j", help="Flag for offline file", type=bool, default=False)
 parser.add_argument("--output", "-o", help="Output Directory", type=str, default="converted_trees")
-parser.add_argument("--key", "-k", help="Key, e.g. PuppiJet. or default", type=str, default="PuppiJet")
+parser.add_argument("--key", "-k", help="Key, e.g. PuppiJet. or default", type=str, default="default")
 args = parser.parse_args()
 
 branches_with_idx = ["TagVarCSV_trackJetDistVal",
@@ -40,6 +40,8 @@ branches_with_idx = ["TagVarCSV_trackJetDistVal",
 branch_key = args.key
 
 base_dir = args.output 
+print("Creating {}".format(base_dir))
+print("exists? {}".format( os.path.isdir(base_dir) ))
 os.makedirs(base_dir, exist_ok = True)
 
 SPLITS = 10
