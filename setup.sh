@@ -2,10 +2,6 @@
 export BTVHLTToolsDirectory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # source DeepJet env
 
-export TrainingVersion="newTuples_01"
-export OnlineDirectory=/nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools/Trainings/
-export OnlineTrainingFiles=/nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools//Trainings/djdc_files/${TrainingVersion}/dataCollection.djcdc
-export OnlineEvaluationFiles=${OnlineDirectory}/evaluation_filelist.txt
 source $BTVHLTToolsDirectory/DeepJet/env.sh
 
 export PYTHONPATH=$BTVHLTToolsDirectory:$PYTHONPATH
