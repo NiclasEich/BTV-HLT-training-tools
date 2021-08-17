@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 matplotlib.use('Agg')
 
-out_dir = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion"))
+out_dir = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion")+"_pred")
 
 larger = 28 
 large = 26
