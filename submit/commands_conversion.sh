@@ -8,4 +8,6 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 echo "current path:"
 pwd
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineDirectory/training_filelist.txt -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DeepCSV
+# python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineDirectory/training_filelist.txt -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DeepCSV
+# python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineTrainingFilesList -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DeepCSV
+python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineTrainingFilesList -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DF

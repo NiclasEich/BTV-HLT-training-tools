@@ -30,11 +30,11 @@ then
           echo "$TrainingOutput already exists!"
       else
           echo "Creating training-output directory!"
-          mkdir $TrainingOutput
+          mkdir -p $TrainingOutput
       fi
       echo "\$TrainingOutput set to ${TrainingOutput}"
 fi
 
-mkdir -p ${OnlineDirectory}
-mkdir -p ${TrainingOutput}
-mkdir -p /nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools/Trainings/djdc_files/
+# mkdir -p ${OnlineDirectory}
+# mkdir -p ${TrainingOutput}
+# mkdir -p /nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools/Trainings/djdc_files/
