@@ -237,7 +237,7 @@ key_lookup = {
     'Jet_pt': 'Jet_pt',
 	'Jet_eta': 'Jet_eta',
 	# 'npv': 'nPV',
-	'npv': 'DeepFlavourInput_nPVs',
+	'npv': 'DeepFlavourInput_nPVS',
 	# 'nCpfcand': 'DeepFlavourInput_n_charged',
 	# 'nNpfcand': 'DeepFlavourInput_n_neutral',
 	# 'nsv': 'DeepFlavourInput_n_sv',
