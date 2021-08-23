@@ -20,7 +20,6 @@ else
     echo "No local_setup.sh found! Using defaults for env vars"
 fi
 
-export TrainingOutput=/nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools/Trainings/Output/
 
 if [ -z "$TrainingOutput" ]
 then
