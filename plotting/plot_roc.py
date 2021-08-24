@@ -38,6 +38,8 @@ roc_0 = tree["roccurve_0"]
 roc_1 = tree["roccurve_1"]
 roc_2 = tree["roccurve_2"]
 roc_3 = tree["roccurve_3"]
+roc_4 = tree["roccurve_4"]
+roc_5 = tree["roccurve_5"]
 
 x_0 = roc_0.xvalues
 y_0 = roc_0.yvalues
@@ -52,12 +54,20 @@ y_0_DeepCSV = roc_2.yvalues
 x_1_DeepCSV = roc_3.xvalues
 y_1_DeepCSV = roc_3.yvalues
 
+x_0_DeepJet = roc_4.xvalues
+y_0_DeepJet = roc_4.yvalues
+
+x_1_DeepJet = roc_5.xvalues
+y_1_DeepJet = roc_5.yvalues
+
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
 ax.plot(x_0, y_0, label="b vs udsg", color="red")
-ax.plot(x_0_DeepCSV, y_0_DeepCSV, label="b vs udsg Offline-DeepCSV", color="red", linestyle="dashed")
+ax.plot(x_0_DeepCSV, y_0_DeepCSV, label="b vs udsg Offline-DeepCSV", color="purple", linestyle="dashed")
+ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg Offline-DeepJet", color="red", linestyle="dashed")
 ax.plot(x_1, y_1, label="b vs c", color="green")
-ax.plot(x_1_DeepCSV, y_1_DeepCSV, label="b vs c Offline-DeepCSV", color="green", linestyle="dashed")
-ax.set_title("RocCurve DeepCSV", fontsize=24)
+ax.plot(x_1_DeepCSV, y_1_DeepCSV, label="b vs c Offline-DeepCSV", color="purple", linestyle="dashed")
+ax.plot(x_1_DeepJet, y_1_DeepJet, label="b vs c Offline-DeepJet", color="green", linestyle="dashed")
+ax.set_title("RocCurve DeepJet", fontsize=24)
 ax.set_xlabel("b-id. efficency")
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')

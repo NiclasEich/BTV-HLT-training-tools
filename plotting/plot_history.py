@@ -3,10 +3,11 @@ import ast
 import argparse
 import matplotlib.pyplot as plt
 
-default_out = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion"))
+default_in = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion"))
+default_out = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion") + "_pred")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--input", "-i", help="Input directory with the full_info.log file", type=str, default=default_out)
+parser.add_argument("--input", "-i", help="Input directory with the full_info.log file", type=str, default=default_in)
 parser.add_argument("--output", "-j", help="Output directory for the plots", type=str, default=default_out)
 args = parser.parse_args()
 
@@ -18,8 +19,8 @@ with open( os.path.join(base_dir, "full_info.log"), "r") as log_file:
     contents = log_file.read()
     history = ast.literal_eval(contents)
 
-print("Creating output dir")
-out_dir =  os.path.join(base_dir, "plots")
+out_dir =  os.path.join(out_dir, "plots")
+print("Creating output dir\n", out_dir)
 os.makedirs(out_dir, exist_ok=True)
 
 loss_train =[ h['loss'] for h in history]
@@ -36,7 +37,7 @@ fig1, ax1 = plt.subplots(1, 1, figsize=(15, 10))
 ax1.plot(ax_epochs, accuracy_train, color='g', label='Training accuracy')
 ax1.plot(ax_epochs, accuracy_val, color='b', label='Validation accuracy')
 ax1.grid(True, "both", linestyle="dashed")
-ax1.set_title('Accuracy DeepCSV-Test')
+ax1.set_title('Accuracy DeepJet-Test')
 ax1.set_xlabel('Epochs')
 ax1.set_ylabel('Accuracy')
 ax1.set_ylim(0., 1.0)
@@ -48,7 +49,7 @@ fig2, ax2 = plt.subplots(1, 1, figsize=(15, 10))
 ax2.plot(ax_epochs, loss_train, color='g', label='Training loss')
 ax2.plot(ax_epochs, loss_val, color='b', label='Validation loss')
 ax2.grid(True, "both", linestyle="dashed")
-ax2.set_title('Loss DeepCSV-Test')
+ax2.set_title('Loss DeepJet-Test')
 ax2.set_xlabel('Epochs')
 ax2.set_ylabel('loss')
 ax2.set_yscale('log')
