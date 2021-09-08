@@ -4,6 +4,7 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 unset LD_LIBRARY_PATH
 unset PYTHONPATH
+echo ${BTVHLTToolsDirectory}/setup.sh
 source ${BTVHLTToolsDirectory}/setup.sh
 sing=`which singularity`
 unset PATH
