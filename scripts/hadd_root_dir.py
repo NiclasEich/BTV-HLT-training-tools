@@ -21,6 +21,7 @@ file_idx = 0
 tmp_file_path = "tmp_filelist.txt"
 print("Removing pot. filelist")
 print("Running on {}!".format(args.process))
+print("Running in\n{}".format(args.directory))
 try:
     os.remove(tmp_file_path)
 except FileNotFoundError:
@@ -28,7 +29,7 @@ except FileNotFoundError:
 
 os.makedirs(str(args.output), exist_ok=True)
 
-for root_file in Path(args.directory).rglob("*/{}/*.root".format(str(args.process))):
+for root_file in Path(args.directory).rglob("**/{}/**/*.root".format(args.process)):
     if file_queue_n == N_QUEUE: 
         with open(tmp_file_path, "a") as filelist:
             filelist.write("\n".join(map(str, file_queue)))
