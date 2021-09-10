@@ -1,6 +1,5 @@
 import numpy as np
 import awkward
-import matplotlib.pyplot as plt
 import uproot3 as u3
 import os
 import time
@@ -133,14 +132,14 @@ branch_dicts = { i_split: {"branch_dict": {}, "branch_registration": {}} for i_s
 n_starts = [0] + [ i * (n_total // SPLITS) for i in range(1, SPLITS) ]
 n_ends = [ ns for ns in n_starts[1:] ] + [-1]
 
-print("all keys:")
-print(new_ntuple_keys)
-print("-"*30)
+# print("all keys:")
+# print(new_ntuple_keys)
+# print("-"*30)
 # out_file = u3.recreate(out_path, compression=u3.ZLIB(7))
 for online_key in new_ntuple_keys:
     if branch_key == "PuppiJet":
         if "PuppiJet" in online_key:
-            print("processing key {}".format(online_key))
+            # print("processing key {}".format(online_key))
             tracking_index_low = online_tree['PuppiJet.Jet_nFirstTrkTagVar'].array()
             tracking_index_high = online_tree['PuppiJet.Jet_nLastTrkTagVar'].array()
             track_eta_index_low = online_tree['PuppiJet.Jet_nFirstTrkEtaRelTagVarCSV'].array()
@@ -154,7 +153,7 @@ for online_key in new_ntuple_keys:
                     branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
                 # branch_dict["{}_counts".format(online_key)] = counts
             elif any(["PuppiJet." + k == online_key for k in branches_with_idx ]):
-                print("Flat var")
+                # print("Flat var")
                 arr = track_var_to_flat( online_tree[online_key].array(), tracking_index_low, tracking_index_high)[on_mask.flatten()][:N_jets]
                 dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
                 # dtype = np.dtype("f4")
@@ -174,7 +173,7 @@ for online_key in new_ntuple_keys:
             # branch_dict[online_key] = arr
     else:
         if not "PuppiJet" in online_key:
-            print("processing key {}".format(online_key))
+            # print("processing key {}".format(online_key))
             tracking_index_low = online_tree['Jet_nFirstTrkTagVarCSV'].array()
             tracking_index_high = online_tree['Jet_nLastTrkTagVarCSV'].array()
             cpf_index_low = online_tree['DeepFlavourInput_NFirst_charged'].array()
@@ -196,8 +195,8 @@ for online_key in new_ntuple_keys:
                     branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
                 # branch_dict["{}_counts".format(online_key)] = counts
             elif any([k == online_key for k in branches_with_idx ]):
-                print("Flat var")
-                print(online_key)
+                # print("Flat var")
+                # print(online_key)
                 arr = track_var_to_flat( online_tree[online_key].array(), tracking_index_low, tracking_index_high)[on_mask.flatten()][:N_jets]
                 dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
                 # dtype = np.dtype(">f4")
@@ -206,24 +205,24 @@ for online_key in new_ntuple_keys:
                     branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
                 # branch_dict["{}_counts".format(online_key)] = counts
             elif any([k == online_key for k in branches_with_idx_cpf ]):
-                print("Flat var")
-                print(online_key)
+                # print("Flat var")
+                # print(online_key)
                 arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), cpf_index_low, cpf_index_high)[on_mask.flatten()][:N_jets]
                 dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
                 for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
                     counts = arr[n_start: n_end].counts
                     branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
             elif any([k == online_key for k in branches_with_idx_npf ]):
-                print("Flat var")
-                print(online_key)
+                # print("Flat var")
+                # print(online_key)
                 arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), npf_index_low, npf_index_high)[on_mask.flatten()][:N_jets]
                 dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
                 for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
                     counts = arr[n_start: n_end].counts
                     branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
             elif any([k == online_key for k in branches_with_idx_sv ]):
-                print("Flat var")
-                print(online_key)
+                # print("Flat var")
+                # print(online_key)
                 arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), sv_index_low, sv_index_high)[on_mask.flatten()][:N_jets]
                 dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
                 for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
