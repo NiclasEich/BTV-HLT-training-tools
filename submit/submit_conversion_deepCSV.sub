@@ -1,4 +1,4 @@
-executable              = submit/job_conversion.sh
+executable              = submit/job_conversion_deepCSV.sh
 arguments               = $(ClusterId)$(ProcId)
 output                  = $ENV(TrainingOutput)/htcondor_logs/conversion_sing.$(ClusterId).$(ProcId).out
 error                   = $ENV(TrainingOutput)/htcondor_logs/conversion_sing.$(ClusterId).$(ProcId).err
@@ -8,8 +8,7 @@ when_to_transfer_output = ON_EXIT
 getenv = True
 request_GPUs = 0
 request_CPUs = 1
-Request_Memory = 100 Gb
+Request_Memory = 50 Gb
 getenv = True
 +RequestRuntime = 18000
 queue
-

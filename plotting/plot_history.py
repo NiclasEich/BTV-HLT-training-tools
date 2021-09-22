@@ -7,12 +7,12 @@ default_in = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersi
 default_out = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion") + "_pred")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--input", "-i", help="Input directory with the full_info.log file", type=str, default=default_in)
+parser.add_argument("--inp", "-i", help="Input directory with the full_info.log file", type=str, default=default_in)
 parser.add_argument("--output", "-j", help="Output directory for the plots", type=str, default=default_out)
 args = parser.parse_args()
 
 out_dir = args.output
-base_dir = args.input 
+base_dir = args.inp 
 
 print("Reading history log")
 with open( os.path.join(base_dir, "full_info.log"), "r") as log_file:

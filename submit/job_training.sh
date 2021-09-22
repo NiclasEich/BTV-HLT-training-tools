@@ -12,5 +12,5 @@ echo "If you see the following error: \"container creation failed: mount /proc/s
 $sing run -B /nfs \
           --bind /proc/fs/openafs/afs_ioctl:/proc/fs/openafs/afs_ioctl \
           --nv \
-	  /nfs/dust/cms/user/sewuchte/public/deepjetcore3_latest.sif \
+          /nfs/dust/cms/user/sewuchte/public/deepjetcore3_latest.sif \
           $BTVHLTToolsDirectory/submit/commands_training.sh
