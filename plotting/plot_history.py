@@ -1,14 +1,16 @@
 import os
 import ast
 import argparse
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 
 default_in = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion"))
 default_out = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion") + "_pred")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--inp", "-i", help="Input directory with the full_info.log file", type=str, default=default_in)
-parser.add_argument("--output", "-j", help="Output directory for the plots", type=str, default=default_out)
+parser.add_argument("--output", "-o", help="Output directory for the plots", type=str, default=default_out)
 args = parser.parse_args()
 
 out_dir = args.output

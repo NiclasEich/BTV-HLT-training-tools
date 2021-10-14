@@ -12,10 +12,17 @@ dir_base = os.path.join( os.getenv("TrainingOutput"), os.getenv("TrainingVersion
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--inp", "-i", help="Input dir", type=str, default=dir_base)
+parser.add_argument("--deepCSV", "-d", help="Is deepJet", default=True, action="store_true")
+parser.add_argument("--output", "-o", help="Output directory for the plots", type=str, default=dir_base)
 args = parser.parse_args()
 
-out_dir = os.path.join( args.inp, "plots" )
+out_dir = os.path.join( args.output, "plots" )
 os.makedirs( out_dir, exist_ok = True)
+
+if not(args.deepCSV) is True:
+    label = "DeepJet"
+else:
+    label = "DeepCSV"
 
 
 larger = 28 
@@ -48,8 +55,12 @@ roc_0 = tree["roccurve_0"]
 roc_1 = tree["roccurve_1"]
 roc_2 = tree["roccurve_2"]
 roc_3 = tree["roccurve_3"]
-roc_4 = tree["roccurve_4"]
-roc_5 = tree["roccurve_5"]
+
+roc_old = uproot3.open( "/nfs/dust/cms/user/neich/BTV/Trainings/DeepJet_prod_05_pred/ROCS_DeepCSV.root")["roccurve_0"]
+
+if not(args.deepCSV):
+    roc_4 = tree["roccurve_4"]
+    roc_5 = tree["roccurve_5"]
 
 x_0 = roc_0.xvalues
 y_0 = roc_0.yvalues
@@ -64,12 +75,15 @@ y_0_DeepCSV = roc_2.yvalues
 x_1_DeepCSV = roc_3.xvalues
 y_1_DeepCSV = roc_3.yvalues
 
-x_0_DeepJet = roc_4.xvalues
-y_0_DeepJet = roc_4.yvalues
+if not(args.deepCSV):
+    x_0_DeepJet = roc_4.xvalues
+    y_0_DeepJet = roc_4.yvalues
 
-x_1_DeepJet = roc_5.xvalues
-y_1_DeepJet = roc_5.yvalues
+    x_1_DeepJet = roc_5.xvalues
+    y_1_DeepJet = roc_5.yvalues
 
+x_broken = roc_old.xvalues
+y_broken = roc_old.yvalues
 
 """
 offline evaluated models
@@ -83,17 +97,19 @@ with ur.open("/nfs/dust/cms/user/neich/BTV/DeepCSV_ttBarHad_30pt.root") as f:
     x_offline_DeepCSV_charm, y_offline_DeepCSV_charm= f["roccurve_1"].values()
 
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
-ax.plot(x_offline_DeepCSV_light, y_offline_DeepCSV_light, label="b vs udsg DeepCSV Off-Off", color="black")
-ax.plot(x_offline_DeepCSV_charm, y_offline_DeepCSV_charm, color="black", linestyle="dashed")
-ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="black")
-ax.plot(x_offline_DeepJet_charm, y_offline_DeepJet_charm, color="black", linestyle="dashed")
+ax.plot(x_offline_DeepCSV_light, y_offline_DeepCSV_light, label="b vs udsg DeepCSV Off-Off", color="green")
+ax.plot(x_offline_DeepCSV_charm, y_offline_DeepCSV_charm, color="green", linestyle="dashed")
+ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="blue")
+ax.plot(x_offline_DeepJet_charm, y_offline_DeepJet_charm, color="blue", linestyle="dashed")
 ax.plot(x_0, y_0, label="b vs udsg Retraining", color="red")
+ax.plot(x_broken, y_broken, label="b vs udsg broken matrix", color="orange")
 ax.plot(x_0_DeepCSV, y_0_DeepCSV, label="b vs udsg DeepCSV Off-On", color="purple")
-ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
+if not(args.deepCSV):
+    ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
+    ax.plot(x_1_DeepJet, y_1_DeepJet, color="orange", linestyle="dashed")
 ax.plot(x_1, y_1, label="b vs c", color="red", linestyle="dashed")
 ax.plot(x_1_DeepCSV, y_1_DeepCSV, color="purple", linestyle="dashed")
-ax.plot(x_1_DeepJet, y_1_DeepJet, color="orange", linestyle="dashed")
-ax.set_title("RocCurve DeepJet", fontsize=24)
+ax.set_title("RocCurve {}".format(label), fontsize=24)
 ax.set_xlabel("b-id. efficiency")
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')
@@ -108,13 +124,15 @@ fig.savefig(os.path.join(out_dir, "roc_curve_all.png"))
 print("Saving all")
 
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
-ax.plot(x_offline_DeepCSV_light, y_offline_DeepCSV_light, label="b vs udsg DeepCSV Off-Off", color="black")
-ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="black")
+ax.plot(x_offline_DeepCSV_light, y_offline_DeepCSV_light, label="b vs udsg DeepCSV Off-Off", color="green")
+ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="blue")
 ax.plot(x_0, y_0, label="b vs udsg Retrained", color="red")
+ax.plot(x_broken, y_broken, label="b vs udsg broken matrix", color="orange")
 ax.plot(x_0_DeepCSV, y_0_DeepCSV, label="b vs udsg DeepCSV Off-On", color="purple")
-ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
+if not(args.deepCSV):
+    ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
 
-ax.set_title("RocCurve DeepJet", fontsize=24)
+ax.set_title("RocCurve {}".format(label), fontsize=24)
 ax.set_xlabel("b-id. efficiency")
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')
@@ -130,11 +148,12 @@ print("Saving light")
 
 
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
-ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="black")
+ax.plot(x_offline_DeepJet_light, y_offline_DeepJet_light, label="b vs udsg DeepJet Off-Off", color="blue")
 ax.plot(x_0, y_0, label="b vs udsg Retraining", color="red")
-ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
+if not(args.deepCSV):
+    ax.plot(x_0_DeepJet, y_0_DeepJet, label="b vs udsg DeepJet Off-On", color="orange")
 
-ax.set_title("RocCurve DeepJet", fontsize=24)
+ax.set_title("RocCurve {}".format(label), fontsize=24)
 ax.set_xlabel("b-id. efficiency")
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')
@@ -149,12 +168,13 @@ fig.savefig(os.path.join(out_dir, "roc_curve_light_deepJet.png"))
 print("Saving light deepJet")
 
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
-ax.plot(x_offline_DeepCSV_charm, y_offline_DeepCSV_charm, label="b vs c DeepCSV Off-Off",color="black", linestyle="dashed")
-ax.plot(x_offline_DeepJet_charm, y_offline_DeepJet_charm, label="b vs c DeepJet Off-Off", color="black", linestyle="dashed")
+ax.plot(x_offline_DeepCSV_charm, y_offline_DeepCSV_charm, label="b vs c DeepCSV Off-Off",color="green", linestyle="dashed")
+ax.plot(x_offline_DeepJet_charm, y_offline_DeepJet_charm, label="b vs c DeepJet Off-Off", color="blue", linestyle="dashed")
 ax.plot(x_1, y_1, label="b vs c Retraining", color="red", linestyle="dashed")
 ax.plot(x_1_DeepCSV, y_1_DeepCSV, label="b vs c DeepCSV Off-On", color="purple", linestyle="dashed")
-ax.plot(x_1_DeepJet, y_1_DeepJet, label="b vs c DeepJet Off-On", color="orange", linestyle="dashed")
-ax.set_title("RocCurve DeepJet", fontsize=24)
+if not(args.deepCSV):
+    ax.plot(x_1_DeepJet, y_1_DeepJet, label="b vs c DeepJet Off-On", color="orange", linestyle="dashed")
+ax.set_title("RocCurve {}".format(label), fontsize=24)
 ax.set_xlabel("b-id. efficiency")
 ax.yaxis.set_ticks_position('both')
 ax.xaxis.set_ticks_position('both')

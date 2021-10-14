@@ -88,12 +88,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-i", help="Input root-file", type=str)
 parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
 parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
+parser.add_argument("--process", "-p", help="Process name", type=str, default=None)
 args = parser.parse_args()
 
 online_file = args.file
 target_dir = args.target
 output_tag = args.output
-process_name = online_file.split("/")[-1].split(".")[0]
+if args.process is None:
+    process_name = online_file.split("/")[-1].split(".")[0]
+else:
+    process_name = args.process
 
 base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
 os.makedirs(base_dir, exist_ok=True)
@@ -139,5 +143,4 @@ for cat, cat_name in zip(categories, category_names):
 
             online_data = online_data[online_mask].flatten()
 
-            print("Starting plotting")
             plot_histogram(online_data, key, process_name, cat_name)

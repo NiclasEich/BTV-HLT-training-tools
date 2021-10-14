@@ -8,4 +8,4 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 echo "current path:"
 pwd
-python3 $BTVHLTToolsDirectory/DeepJet/Train/train_DeepCSV.py $OnlineTrainingFiles $TrainingOutput/${TrainingVersion}_deepCSV/
+python3 $BTVHLTToolsDirectory/DeepJet/Train/train_DeepCSV.py $OnlineTrainingFilesDeepCSV $TrainingOutput/${TrainingVersion}_deepCSV/
