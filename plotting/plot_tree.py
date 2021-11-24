@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import uproot3 as u3
+import tqdm
 import os
 import argparse
 import numpy as np
@@ -61,21 +62,20 @@ def plot_histogram(online_data, key, name, category_name):
     if plot_configs.get(key, {"log": False})["log"] is True:
         ax.set_yscale('log')
     ax.set_ylabel("N, normalized", fontsize=15)
+    ax.set_xlabel(key, fontsize=15)
     ax.set_title("{}\n{}".format(name, category_name), fontsize=15)
     ax.grid(which='both', axis='y',linestyle="dashed")
 
-    # props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    # # place a text box in upper left in axes coords
-    # try:
-        # textstr = "Online:\nmin {0:1.2f}\nmax {1:1.2f}\nOffline:\nmin {2:1.2f}\nmax {3:1.2f}".format( np.min(online_data), np.max(online_data), np.min(offline_data), np.max(offline_data))
-        # if tot_underflows != None:
-            # textstr += "\nUnderflows: {}".format(tot_underflows)
-    # except ValueError as e:
-        # print(e)
-        # textstr = "Error"
-    # ax.text(0.8, 0.75, textstr, transform=ax[0].transAxes, fontsize=8,
-                    # verticalalignment='top', bbox=props)
-
+    # place a text box in upper left in axes coords
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    try:
+        textstr = "min {0:1.2f}\nmax {1:1.2f}\nmean {2:1.2f}\nstd {3:1.2f}".format( np.min(online_data), np.max(online_data), np.mean(online_data), np.std(online_data))
+    except ValueError as e:
+        print(e)
+        textstr = "Error"
+    ax.text(0.8, 0.75, textstr, transform=ax.transAxes, fontsize=8,
+                    verticalalignment='top', bbox=props)
+    
 
     ax.xaxis.set_minor_locator(AutoMinorLocator()) 
     ax.tick_params(which='minor', length=4, color='black')
@@ -130,13 +130,17 @@ for cat, cat_name in zip(categories, category_names):
     online_mask = reduce(np.logical_or , [ online_tree[k].array() == 1 for k in cat])
 
     online_mask = on_pt_mask & online_mask
+    print("Category:\t{}".format(cat_name))
 
     # for key  in plot_configs.keys():
-    for key  in new_ntuple_keys:
+    prog_bar = tqdm.tqdm( new_ntuple_keys )
+
+    for key  in prog_bar: 
+        prog_bar.set_description("Key: {}".format(key))
         if key in list(map(lambda x: x.decode("utf-8"), online_tree.keys())):
             online_data = online_tree[key].array()
 
-            print("key:\t", key)
+            # print("key:\t", key)
             # if "vertex" in key:
                 # print("Setting Values to 0:\nOnline:\t{}\nOffline:\t{}".format(sum(np.invert(on_nSV_mask)), sum(np.invert(off_nSV_mask))))
                 # online_data[np.invert(on_nSV_mask)] *= 0.
