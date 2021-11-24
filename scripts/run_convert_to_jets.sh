@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#declare -a array=("GluGluToHHTo4B_cHHH1" "QCD_Pt120to170_flat" "QCD_Pt20to30_flat" "QCD_Pt50to80_flat" "GluGluToHHTo4B_cHHH2p45"  "QCD_Pt15to7000_pu0to80"  "QCD_Pt300to470_flat"  "QCD_Pt600toInf_flat" "TTbar_14TeV")
-declare -a array=("QCD_Pt300to470_flat"  "QCD_Pt600toInf_flat" "TTbar_14TeV")
+declare -a array=("GluGluToHHTo4B_cHHH1" "QCD_Pt120to170_flat" "QCD_Pt20to30_flat" "QCD_Pt50to80_flat" "GluGluToHHTo4B_cHHH2p45"  "QCD_Pt15to7000_pu0to80"  "QCD_Pt300to470_flat"  "QCD_Pt600toInf_flat" "ttbar")
+#declare -a array=("QCD_Pt300to470_flat"  "QCD_Pt600toInf_flat" "TTbar_14TeV")
 
 arraylength=${#array[@]}
 
