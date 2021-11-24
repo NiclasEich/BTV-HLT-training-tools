@@ -5,18 +5,21 @@ import awkward
 import argparse
 import numpy as np
 import uproot3 as u3
-from scripts.training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys
+from scripts.training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys, default_values
 from scripts.training_branches import file_comparison
 
-def track_var_to_flat(arr, idx_low, idx_high):
-    # arr = np.ones( (len(arr), 200))
-    arr = awkward.to_awkward0(awkward.Array( [[[a if a != -9999. else -999. for a in ev[ka : kb + 1] ] for ka, kb in zip(kidx_a, kidx_b) ] for ev, kidx_a, kidx_b in zip(arr, idx_low, idx_high)])).flatten(axis=0)
+def track_var_to_flat(arr, idx_low, idx_high, **kwargs):
+    if kwargs.get("default", None) is not None:
+        arr = awkward.to_awkward0(awkward.Array( [[[a if a != kwargs["default"]["old"] else kwargs["default"]["new"] for a in ev[ka : kb + 1] ] for ka, kb in zip(kidx_a, kidx_b) ] for ev, kidx_a, kidx_b in zip(arr, idx_low, idx_high)])).flatten(axis=0)
+    else:
+        arr = awkward.to_awkward0(awkward.Array( [[[a for a in ev[ka : kb + 1] ] for ka, kb in zip(kidx_a, kidx_b) ] for ev, kidx_a, kidx_b in zip(arr, idx_low, idx_high)])).flatten(axis=0)
+    return arr
+
     # arr = awkward.to_awkward0(awkward.Array( [[ev[ka : kb] if len( ev[ka : kb] ) > 0 else [0.] for ka, kb in zip(kidx_a, kidx_b) ] for ev, kidx_a, kidx_b in zip(arr, idx_low, idx_high)])).flatten(axis=0)
     # for i, a in enumerate(arr):
         # if len(a)== 0:
             # from IPython import embed;embed()
             # arr[i] = np.array([0.])
-    return arr
     # return     # return awkward.to_awkward0(awkward.Array( [[ ev[ka : kb] if len(ev[ka : kb]) >0 else 0. for ka, kb in zip(kidx_a, kidx_b) ] for ev, kidx_a, kidx_b in zip(arr, idx_low, idx_high)])).flatten(axis=0)
 
 
@@ -104,8 +107,11 @@ if branch_key == "PuppiJet":
     online_jet_pt = online_tree["PuppiJet.Jet_pt"].array()
 else:
     online_jet_pt = online_tree["Jet_pt"].array()
+    online_jet_npfc = online_tree[key_lookup["nCpfcand"]].array()
 
 on_mask = (online_jet_pt > 25.) & (online_jet_pt < 1000.)
+on_mask = on_mask & online_jet_npfc > -1
+
 
 n_total = len(online_tree["Jet_pt"].array()[on_mask].flatten())
 
@@ -132,45 +138,58 @@ track_eta_index_low = online_tree['Jet_nFirstTrkEtaRelTagVarCSV'].array()
 track_eta_index_high = online_tree['Jet_nLastTrkEtaRelTagVarCSV'].array()
 
 for online_key in new_ntuple_keys:
+    kwargs = {}
+
     if 'TagVarCSV_trackEtaRel' in online_key:
-        arr = track_var_to_flat( online_tree[online_key].array(), track_eta_index_low, track_eta_index_high)[on_mask.flatten()][:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+        arr = track_var_to_flat( online_tree[online_key].array(), track_eta_index_low, track_eta_index_high, **kwargs)[on_mask.flatten()][:N_jets]
         dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
         for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
             counts = arr[n_start: n_end].counts
             branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
     elif any([k == online_key for k in branches_with_idx ]):
-        arr = track_var_to_flat( online_tree[online_key].array(), tracking_index_low, tracking_index_high)[on_mask.flatten()][:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+        arr = track_var_to_flat( online_tree[online_key].array(), tracking_index_low, tracking_index_high, **kwargs)[on_mask.flatten()][:N_jets]
         dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
         for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
             counts = arr[n_start: n_end].counts
             branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
     elif any([k == online_key for k in branches_with_idx_cpf ]):
-        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), cpf_index_low, cpf_index_high)[on_mask.flatten()][:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), cpf_index_low, cpf_index_high, **kwargs)[on_mask.flatten()][:N_jets]
         dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
         for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
             counts = arr[n_start: n_end].counts
             branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
     elif any([k == online_key for k in branches_with_idx_npf ]):
-        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), npf_index_low, npf_index_high)[on_mask.flatten()][:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), npf_index_low, npf_index_high, **kwargs)[on_mask.flatten()][:N_jets]
         dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
         for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
             counts = arr[n_start: n_end].counts
             branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
     elif any([k == online_key for k in branches_with_idx_sv ]):
-        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), sv_index_low, sv_index_high)[on_mask.flatten()][:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+        arr = track_var_to_flat( online_tree[key_lookup[online_key]].array(), sv_index_low, sv_index_high, **kwargs)[on_mask.flatten()][:N_jets]
         dtype = u3.newbranch(np.dtype("f4"), size="{}_counts".format(online_key),)
         for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
             counts = arr[n_start: n_end].counts
             branch_dicts[i_split]["branch_dict"]["{}_counts".format(online_key)] = counts
     else:
         arr = online_tree[key_lookup[online_key]].array()[on_mask].flatten()[:N_jets]
+        if default_values.get(online_key, None) is not None:
+            kwargs["default"] = default_values[online_key]
+            arr[ arr == kwargs["default"]["old"] ] = kwargs["default"]["new"]
         dtype = np.dtype("f4")
 
     for i_split, (n_start, n_end) in enumerate(zip(n_starts, n_ends)):
         branch_dicts[i_split]["branch_registration"][online_key] = dtype
         branch_dicts[i_split]["branch_dict"][online_key] = arr[n_start: n_end]
-
-# from IPython import embed;embed()
 
 for i_split in range(SPLITS):
     out_path =  os.path.join( base_dir, "{}_{}_{}.root".format(name, branch_key, i_split))
