@@ -4,10 +4,13 @@ import tqdm
 import os
 import argparse
 import numpy as np
+import awkward as ak
 from scripts.training_branches import key_lookup, DeepCSV_all_branches, new_ntuple_keys,file_comparison
 from scripts.recalculate_flightDistance import recalculate_flightDistance
 from functools import reduce
 from matplotlib.ticker import AutoMinorLocator
+import matplotlib
+matplotlib.use('Agg')
 
 plot_configs = {'jet_pt':{"bins": np.arange(0, 1000, 25) , "log": True},
                 'jet_eta':{"bins": np.linspace(-4.2, 4.2, 20) , "log": False},
@@ -55,7 +58,10 @@ def plot_histogram(online_data, key, name, category_name):
     fig, ax = plt.subplots(1, 1)
     fig.subplots_adjust(hspace=0)
 
-    hist_online, bin_edges = np.histogram( online_data, bins=plot_configs.get(key, {"bins": 20})["bins"])
+    try:
+        hist_online, bin_edges = np.histogram( online_data, bins=plot_configs.get(key, {"bins": 20})["bins"])
+    except ValueError as e:
+        print(f"{key} failed due to valueError in histogramming.")
 
     ax.hist( online_data, bins = plot_configs.get(key,{"bins": 20} )["bins"],  label = "Online $\mu=${0:1.2f} $\sigma$={1:1.2f}".format(np.mean(online_data), np.std(online_data)), color="red", alpha=0.5, density=True)
     ax.legend()
@@ -89,6 +95,7 @@ parser.add_argument("--file", "-i", help="Input root-file", type=str)
 parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
 parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
 parser.add_argument("--process", "-p", help="Process name", type=str, default=None)
+parser.add_argument("--isData", "-d", help="Flag for is Data",  action="store_true", default=False)
 args = parser.parse_args()
 
 online_file = args.file
@@ -102,7 +109,8 @@ else:
 base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
 os.makedirs(base_dir, exist_ok=True)
 
-online_tree =  u3.open(online_file)["ttree"]
+# online_tree =  u3.open(online_file)["ttree"]
+online_tree =  u3.open(online_file)["btagana/ttree"]
 
 plot_keys = key_lookup.keys()
 
@@ -118,16 +126,23 @@ online_nSV = online_tree["TagVarCSV_jetNSecondaryVertices"].array()
 on_nSV_mask = online_nSV >= 0
 
 
-category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
 # categories = [ ['isB'], ['isBB', 'isGBB'], ['isLeptonicB', 'isLeptonicB_C'], ['isC', 'isCC', 'isGCC'], ['isUD', 'isS'], ['isG'], ['isB','isBB', 'isGBB', 'isLeptonicB', 'isLeptonicB_C', 'isC', 'isCC', 'isGCC','isUD', 'isS', 'isG']]
-categories = [ ['Jet_isB'], ['Jet_isBB', 'Jet_isGBB'], ['Jet_isLeptonicB', 'Jet_isLeptonicB_C'], ['Jet_isC', 'Jet_isCC', 'Jet_isGCC'], ['Jet_isUD', 'Jet_isS'], ['Jet_isG'], ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
+if args.isData is True:
+    categories = [ ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
+    category_names = ["all_jets"]
+else:
+    categories = [ ['Jet_isB'], ['Jet_isBB', 'Jet_isGBB'], ['Jet_isLeptonicB', 'Jet_isLeptonicB_C'], ['Jet_isC', 'Jet_isCC', 'Jet_isGCC'], ['Jet_isUD', 'Jet_isS'], ['Jet_isG'], ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
+    category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
 
 for cat, cat_name in zip(categories, category_names):
     plot_dir = os.path.join( base_dir, cat_name )
     os.makedirs(plot_dir, exist_ok=True)
 
     # online_mask = reduce(np.logical_or , [ online_tree[key_lookup[k]].array() == 1 for k in cat])
-    online_mask = reduce(np.logical_or , [ online_tree[k].array() == 1 for k in cat])
+    if args.isData is True:
+        online_mask = True 
+    else:
+        online_mask = reduce(np.logical_or , [ online_tree[k].array() == 1 for k in cat])
 
     online_mask = on_pt_mask & online_mask
     print("Category:\t{}".format(cat_name))
@@ -135,9 +150,47 @@ for cat, cat_name in zip(categories, category_names):
     # for key  in plot_configs.keys():
     prog_bar = tqdm.tqdm( new_ntuple_keys )
 
-    for key  in prog_bar: 
+    keys = [a.decode("utf-8") for a in online_tree.keys() if "DeepFlavourInput" in a.decode("utf-8")]
+
+    keys += [
+        'Jet_DeepFlavourBDisc',
+        'Jet_DeepFlavourCvsLDisc',
+        'Jet_DeepFlavourCvsBDisc',
+        'Jet_DeepFlavourB',
+        'Jet_DeepFlavourBB',
+        'Jet_DeepFlavourLEPB',
+        'Jet_DeepFlavourC',
+        'Jet_DeepFlavourUDS',
+        'Jet_DeepFlavourG',
+        'Jet_DeepCSVBDisc',
+        'Jet_DeepCSVBDiscN',
+        'Jet_DeepCSVCvsLDisc',
+        'Jet_DeepCSVCvsLDiscN',
+        'Jet_DeepCSVCvsBDisc',
+        'Jet_DeepCSVCvsBDiscN',
+        'Jet_DeepCSVb',
+        'Jet_DeepCSVc',
+        'Jet_DeepCSVl',
+        'Jet_DeepCSVbb',
+        'Jet_DeepCSVcc',
+        'Jet_DeepCSVbN',
+        'Jet_DeepCSVcN',
+        'Jet_DeepCSVlN',
+        'Jet_DeepCSVbbN',
+        'Jet_DeepCSVccN',
+        'Jet_nFirstSE',
+        'Jet_nLastSE',
+        'Jet_nFirstSM',
+        'Jet_nLastSM',
+        'Jet_nFirstSV',
+        'Jet_nLastSV',
+    ]
+
+
+    for key  in keys: 
         prog_bar.set_description("Key: {}".format(key))
         if key in list(map(lambda x: x.decode("utf-8"), online_tree.keys())):
+            print(key)
             online_data = online_tree[key].array()
 
             # print("key:\t", key)
@@ -145,6 +198,11 @@ for cat, cat_name in zip(categories, category_names):
                 # print("Setting Values to 0:\nOnline:\t{}\nOffline:\t{}".format(sum(np.invert(on_nSV_mask)), sum(np.invert(off_nSV_mask))))
                 # online_data[np.invert(on_nSV_mask)] *= 0.
 
-            online_data = online_data[online_mask].flatten()
+            online_data = online_data.flatten()
+            # try:
+                # online_data = online_data.flatten()
+            # except ValueError as e:
+            #     print(f"For key {key}, the mask could not be applied!!")
+            #     online_data = online_data[ak.any( online_mask, axis=-1)].flatten()
 
             plot_histogram(online_data, key, process_name, cat_name)

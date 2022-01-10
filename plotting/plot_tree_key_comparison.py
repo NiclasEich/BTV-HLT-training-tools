@@ -123,70 +123,72 @@ def plot_histogram(datasets, dataset_names, key, name, category_name, target_dir
     fig.savefig( os.path.join(target_dir, "{}.png".format(key)))
     plt.close()
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--offline", "-j", help="Input root-file for offline", type=str, default="/afs/cern.ch/work/n/neich/public/new_offline_files/TT_TuneCP5_14TeV-powheg-pythia8_PU200_new.root")
-parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
-parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
-args = parser.parse_args()
+if __name__ == "__main__":
 
-offline_file = args.offline
-output_tag = args.output
-target_dir = args.target
-process_name = offline_file.split("/")[-1].split(".")[0]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--offline", "-j", help="Input root-file for offline", type=str, default="/afs/cern.ch/work/n/neich/public/new_offline_files/TT_TuneCP5_14TeV-powheg-pythia8_PU200_new.root")
+    parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
+    parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
+    args = parser.parse_args()
+
+    offline_file = args.offline
+    output_tag = args.output
+    target_dir = args.target
+    process_name = offline_file.split("/")[-1].split(".")[0]
 
 
-base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
-os.makedirs(base_dir, exist_ok=True)
+    base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
+    os.makedirs(base_dir, exist_ok=True)
 
-print("Opening File")
-offline_tree = u3.open(offline_file)["btagana"]["ttree"]
-print("successfully opened file!")
+    print("Opening File")
+    offline_tree = u3.open(offline_file)["btagana"]["ttree"]
+    print("successfully opened file!")
 
-plot_keys = key_lookup.keys()
+    plot_keys = key_lookup.keys()
 
-offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDistance2dSig", "TagVarCSV_flightDistance3dVal", "TagVarCSV_flightDistance3dSig"]
+    offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDistance2dSig", "TagVarCSV_flightDistance3dVal", "TagVarCSV_flightDistance3dSig"]
 
-categories = ["all"]
-category_names = ["all"]
+    categories = ["all"]
+    category_names = ["all"]
 
-# dataset_names = ["", "PuppiJet.", "CaloJet."]
-dataset_names = ["", "PuppiJet."]
+    # dataset_names = ["", "PuppiJet.", "CaloJet."]
+    dataset_names = ["", "PuppiJet."]
 
-print("Start plotting loop")
-for cat, cat_name in zip(categories, category_names):
-    plot_dir = os.path.join( base_dir, cat_name )
-    os.makedirs(plot_dir, exist_ok=True)
+    print("Start plotting loop")
+    for cat, cat_name in zip(categories, category_names):
+        plot_dir = os.path.join( base_dir, cat_name )
+        os.makedirs(plot_dir, exist_ok=True)
 
-    # offline_mask = reduce(np.logical_or , [ offline_tree[k].array() == 1 for k in cat])
+        # offline_mask = reduce(np.logical_or , [ offline_tree[k].array() == 1 for k in cat])
 
-    for key in branch_names:
-        try:
-            data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
-            # if "DeepFlavourInput" in key:
-                # dset_names = ["default", "PuppiJet"]
-                # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names[0:2]]
-            # else:
-                # dset_names = ["default", "PuppiJet", "CaloJet"]
-                # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
-        except KeyError as e:
-            print(e)
-            print("Error during key:\t{}".format(key))
-            print("Exiting...")
-            quit() 
+        for key in branch_names:
+            try:
+                data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
+                # if "DeepFlavourInput" in key:
+                    # dset_names = ["default", "PuppiJet"]
+                    # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names[0:2]]
+                # else:
+                    # dset_names = ["default", "PuppiJet", "CaloJet"]
+                    # data = [ offline_tree[ d_name + key].array().flatten() for d_name in dataset_names]
+            except KeyError as e:
+                print(e)
+                print("Error during key:\t{}".format(key))
+                print("Exiting...")
+                quit() 
 
-        if plot_configs.get(key, None) is not None:
-            if plot_configs[key].get("underflow", False) is not False:
-                masks = [ d != plot_configs[key]["underflow"] for d in data]
-                data = [ d[m] for d,m in zip(data, masks) ]
+            if plot_configs.get(key, None) is not None:
+                if plot_configs[key].get("underflow", False) is not False:
+                    masks = [ d != plot_configs[key]["underflow"] for d in data]
+                    data = [ d[m] for d,m in zip(data, masks) ]
 
-        if "DeepFlavourInput" in key:
-            dir_tag= "DeepFlavourInput"
-        elif "TagVarCSV" in key:
-            dir_tag= "TagVarCSV"
-        else:
-            dir_tag= "default"
-        target_dir = os.path.join(plot_dir, dir_tag)
-        os.makedirs(target_dir, exist_ok=True)
-        plot_histogram(data, ["default", "PuppiJet"], key, process_name, cat_name, target_dir)
-print("Done!")
-print("Saved plots to:\n{}".format(plot_dir))
+            if "DeepFlavourInput" in key:
+                dir_tag= "DeepFlavourInput"
+            elif "TagVarCSV" in key:
+                dir_tag= "TagVarCSV"
+            else:
+                dir_tag= "default"
+            target_dir = os.path.join(plot_dir, dir_tag)
+            os.makedirs(target_dir, exist_ok=True)
+            plot_histogram(data, ["default", "PuppiJet"], key, process_name, cat_name, target_dir)
+    print("Done!")
+    print("Saved plots to:\n{}".format(plot_dir))

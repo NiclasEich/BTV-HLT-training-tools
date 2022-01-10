@@ -135,86 +135,87 @@ def plot_histogram(online_data, offline_data, key, name, category_name):
     fig.savefig( os.path.join(plot_dir, "{}_{}.pdf".format(name, key)))
     plt.close()
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--online", "-i", help="Input root-file", type=str)
-parser.add_argument("--offline", "-j", help="Input root-file for offline", type=str, default="/afs/cern.ch/work/n/neich/public/new_offline_files/TT_TuneCP5_14TeV-powheg-pythia8_PU200_new.root")
-parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
-parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--online", "-i", help="Input root-file", type=str)
+    parser.add_argument("--offline", "-j", help="Input root-file for offline", type=str, default="/afs/cern.ch/work/n/neich/public/new_offline_files/TT_TuneCP5_14TeV-powheg-pythia8_PU200_new.root")
+    parser.add_argument("--output", "-o", help="Output directory TAG. For example v02 to add a v02 at the end of the root-file", type=str, default="v00")
+    parser.add_argument("--target", "-t", help="Target directory.", type=str, default="./dataset_comp")
+    args = parser.parse_args()
 
-online_file = args.online
-offline_file = args.offline
-output_tag = args.output
-target_dir = args.target
-process_name = online_file.split("/")[-1].split(".")[0]
+    online_file = args.online
+    offline_file = args.offline
+    output_tag = args.output
+    target_dir = args.target
+    process_name = online_file.split("/")[-1].split(".")[0]
 
 
-base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
-os.makedirs(base_dir, exist_ok=True)
+    base_dir = os.path.join(target_dir, "{}_{}".format(process_name, output_tag))
+    os.makedirs(base_dir, exist_ok=True)
 
-offline_tree = u3.open(offline_file)["btagana"]["ttree"]
-online_tree =  u3.open(online_file)["ttree"]
+    offline_tree = u3.open(offline_file)["btagana"]["ttree"]
+    online_tree =  u3.open(online_file)["ttree"]
 
-plot_keys = key_lookup.keys()
+    plot_keys = key_lookup.keys()
 
-online_jet_pt = online_tree[key_lookup["Jet_pt"]].array()
-offline_jet_pt = offline_tree["Jet_pt"].array()
+    online_jet_pt = online_tree[key_lookup["Jet_pt"]].array()
+    offline_jet_pt = offline_tree["Jet_pt"].array()
 
-off_pt_mask = (offline_jet_pt > 25.) & (offline_jet_pt < 10000.)
-on_pt_mask = (online_jet_pt > 25.) & (online_jet_pt < 10000.)
+    off_pt_mask = (offline_jet_pt > 25.) & (offline_jet_pt < 10000.)
+    on_pt_mask = (online_jet_pt > 25.) & (online_jet_pt < 10000.)
 
-online_nSV = online_tree[key_lookup["TagVarCSV_jetNSecondaryVertices"]].array()
-offline_nSV = offline_tree["TagVarCSV_jetNSecondaryVertices"].array()
+    online_nSV = online_tree[key_lookup["TagVarCSV_jetNSecondaryVertices"]].array()
+    offline_nSV = offline_tree["TagVarCSV_jetNSecondaryVertices"].array()
 
-on_nSV_mask = online_nSV > 0
-off_nSV_mask = offline_nSV > 0 
+    on_nSV_mask = online_nSV > 0
+    off_nSV_mask = offline_nSV > 0 
 
-offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDistance2dSig", "TagVarCSV_flightDistance3dVal", "TagVarCSV_flightDistance3dSig"]
+    offline_cleaning_keys = ["TagVarCSV_flightDistance2dVal", "TagVarCSV_flightDistance2dSig", "TagVarCSV_flightDistance3dVal", "TagVarCSV_flightDistance3dSig"]
 
-category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
-categories = [ ['Jet_isB'], ['Jet_isBB', 'Jet_isGBB'], ['Jet_isLeptonicB', 'Jet_isLeptonicB_C'], ['Jet_isC', 'Jet_isCC', 'Jet_isGCC'], ['Jet_isUD', 'Jet_isS'], ['Jet_isG'], ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
+    category_names = ["b_jets", "bb+gbb_jets", "lepb_jets", "c+cc+gcc_jets", "uds_jets", "g_jes", "all_jets"]
+    categories = [ ['Jet_isB'], ['Jet_isBB', 'Jet_isGBB'], ['Jet_isLeptonicB', 'Jet_isLeptonicB_C'], ['Jet_isC', 'Jet_isCC', 'Jet_isGCC'], ['Jet_isUD', 'Jet_isS'], ['Jet_isG'], ['Jet_isB','Jet_isBB', 'Jet_isGBB', 'Jet_isLeptonicB', 'Jet_isLeptonicB_C', 'Jet_isC', 'Jet_isCC', 'Jet_isGCC','Jet_isUD', 'Jet_isS', 'Jet_isG']]
 
-for cat, cat_name in zip(categories, category_names):
-    plot_dir = os.path.join( base_dir, cat_name )
-    print("Creating plot-dir {}".format(plot_dir))
-    os.makedirs(plot_dir, exist_ok=True)
+    for cat, cat_name in zip(categories, category_names):
+        plot_dir = os.path.join( base_dir, cat_name )
+        print("Creating plot-dir {}".format(plot_dir))
+        os.makedirs(plot_dir, exist_ok=True)
 
-    offline_mask = reduce(np.logical_or , [ offline_tree[k].array() == 1 for k in cat])
-    online_mask = reduce(np.logical_or , [ online_tree[key_lookup[k]].array() == 1 for k in cat])
+        offline_mask = reduce(np.logical_or , [ offline_tree[k].array() == 1 for k in cat])
+        online_mask = reduce(np.logical_or , [ online_tree[key_lookup[k]].array() == 1 for k in cat])
 
-    online_mask = on_pt_mask & online_mask
-    offline_mask = off_pt_mask & offline_mask
+        online_mask = on_pt_mask & online_mask
+        offline_mask = off_pt_mask & offline_mask
 
-    tracking_index_low = offline_tree['Jet_nFirstTrkTagVarCSV'].array()
-    tracking_index_high = offline_tree['Jet_nLastTrkTagVarCSV'].array()
-    # dtype = np.dtype("f4")
-    track_eta_index_low = offline_tree['Jet_nFirstTrkEtaRelTagVarCSV'].array()
-    track_eta_index_high = offline_tree['Jet_nLastTrkEtaRelTagVarCSV'].array()
+        tracking_index_low = offline_tree['Jet_nFirstTrkTagVarCSV'].array()
+        tracking_index_high = offline_tree['Jet_nLastTrkTagVarCSV'].array()
+        # dtype = np.dtype("f4")
+        track_eta_index_low = offline_tree['Jet_nFirstTrkEtaRelTagVarCSV'].array()
+        track_eta_index_high = offline_tree['Jet_nLastTrkEtaRelTagVarCSV'].array()
 
-    for key in key_lookup.keys():
-        online_data = online_tree[key_lookup[key]].array()
-        offline_data = offline_tree[key].array()
+        for key in key_lookup.keys():
+            online_data = online_tree[key_lookup[key]].array()
+            offline_data = offline_tree[key].array()
 
-        if key in offline_cleaning_keys:
-            offline_data = recalculate_flightDistance(offline_tree, key)
+            if key in offline_cleaning_keys:
+                offline_data = recalculate_flightDistance(offline_tree, key)
 
-        print("key:\t", key)
+            print("key:\t", key)
 
-        online_data = online_data[online_mask].flatten()
+            online_data = online_data[online_mask].flatten()
 
-        if 'TagVarCSV_trackEtaRel' in key:
-            offline_data = track_var_to_flat( offline_tree[key].array(), track_eta_index_low, track_eta_index_high)[offline_mask.flatten()]
-        elif any([k == key for k in branches_with_idx ]):
-            offline_data = track_var_to_flat( offline_tree[key].array(), tracking_index_low, tracking_index_high)[offline_mask.flatten()]
-        else:
-            offline_data = offline_data[offline_mask].flatten()
+            if 'TagVarCSV_trackEtaRel' in key:
+                offline_data = track_var_to_flat( offline_tree[key].array(), track_eta_index_low, track_eta_index_high)[offline_mask.flatten()]
+            elif any([k == key for k in branches_with_idx ]):
+                offline_data = track_var_to_flat( offline_tree[key].array(), tracking_index_low, tracking_index_high)[offline_mask.flatten()]
+            else:
+                offline_data = offline_data[offline_mask].flatten()
 
-        if plot_configs.get(key, {}).get("underflow", False) is not False:
-            mask = offline_data != plot_configs.get(key, {"underflow": -999999.}).get("underflow", -99999.)
-            tot_underflows = sum(np.invert(mask))
-            offline_data = offline_data[mask]
-        else:
-            tot_underflows = None
+            if plot_configs.get(key, {}).get("underflow", False) is not False:
+                mask = offline_data != plot_configs.get(key, {"underflow": -999999.}).get("underflow", -99999.)
+                tot_underflows = sum(np.invert(mask))
+                offline_data = offline_data[mask]
+            else:
+                tot_underflows = None
 
-        print("Starting plotting")
-        plot_histogram(online_data, offline_data, key, process_name, cat_name)
+            print("Starting plotting")
+            plot_histogram(online_data, offline_data, key, process_name, cat_name)
