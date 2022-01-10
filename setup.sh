@@ -10,6 +10,7 @@ export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJetCore/conversion:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJet/modules:$PYTHONPATH
 export PYTHONPATH=$BTVHLTToolsDirectory/DeepJet/modules/models:$PYTHONPATH
+export PYTHONPATH=/usr/lib64/python3.6/site-packages:$PYTHONPATH
 
 export LD_LIBRARY_PATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$LD_LIBRARY_PATH
 
