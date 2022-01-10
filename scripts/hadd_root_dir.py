@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 N_JETS = int( 5*1e3)
-N_FILE = int( 5*1e6)
+N_FILE = int( 5*1e4)
 
 N_QUEUE = N_FILE/N_JETS
 

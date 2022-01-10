@@ -8,8 +8,8 @@ log                     = $ENV(TrainingOutput)/htcondor_logs/batch_conversion_si
 should_transfer_files   = YES
 getenv = True
 when_to_transfer_output = ON_EXIT
+Request_Memory = 4 Gb
 request_GPUs = 0
 request_CPUs = 1
 +RequestRuntime = 7200
-queue 25
-
+queue 7

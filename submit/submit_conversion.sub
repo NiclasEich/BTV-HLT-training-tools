@@ -8,8 +8,8 @@ when_to_transfer_output = ON_EXIT
 getenv = True
 request_GPUs = 0
 request_CPUs = 1
-Request_Memory = 100 Gb
+Request_Memory = 30 Gb
 getenv = True
-+RequestRuntime = 18000
++RequestRuntime = 54000
 queue
 

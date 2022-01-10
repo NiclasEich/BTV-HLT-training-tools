@@ -5,7 +5,7 @@ import awkward
 import argparse
 import numpy as np
 import uproot3 as u3
-from scripts.training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys, default_values
+from scripts.training_branches import key_lookup, DeepCSV_all_branches , new_ntuple_keys, default_values, default_values_CSV
 from scripts.training_branches import file_comparison
 
 def track_var_to_flat(arr, idx_low, idx_high, **kwargs):
@@ -28,7 +28,11 @@ parser.add_argument("--infile", "-i", help="Input root-file", type=str)
 parser.add_argument("--offline", "-j", help="Flag for offline file", type=bool, default=False)
 parser.add_argument("--output", "-o", help="Output Directory", type=str, default="converted_trees")
 parser.add_argument("--key", "-k", help="Key, e.g. PuppiJet. or default", type=str, default="default")
+parser.add_argument("--deepCSV", "-d", help="Is deepCSV", default=False, action="store_true")
 args = parser.parse_args()
+
+if args.deepCSV is True:
+    default_values = default_values_CSV
 
 branches_with_idx = ["TagVarCSV_trackJetDistVal",
                      "TagVarCSV_trackDeltaR",

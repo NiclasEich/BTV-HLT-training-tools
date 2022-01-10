@@ -10,4 +10,4 @@ echo "current path:"
 pwd
 # python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineDirectory/training_filelist.txt -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DeepCSV
 # python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineTrainingFilesList -o $OnlineDirectory/djdc_files/$TrainingVersion -c TrainData_DeepCSV
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineTrainingFilesList -o $OnlineDirectory/djdc_files/${TrainingVersion}_deepCSV -c TrainData_DeepCSV
+python3 $BTVHLTToolsDirectory/DeepJetCore/bin/convertFromSource.py -i $OnlineTrainingFileListDeepCSV -o $OnlineDirectory/djdc_files/${TrainingVersion}_deepCSV -c TrainData_DeepCSV

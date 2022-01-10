@@ -1,3 +1,5 @@
+import numpy as np
+
 global_branches = ['jet_pt', 'jet_eta',
 'nCpfcand','nNpfcand',
 'nsv','npv',
@@ -91,6 +93,61 @@ DeepCSV_vtx_branches = ['TagVarCSV_vertexMass',
                           'TagVarCSV_flightDistance3dSig']
 
 DeepCSV_all_branches = DeepCSV_global_branches + DeepCSV_track_branches + DeepCSV_eta_rel_branches + DeepCSV_vtx_branches
+
+
+"""
+# DeepFlavourInput_nPVS
+# DeepFlavourInput_n_charged
+DeepFlavourInput_NFirst_charged
+DeepFlavourInput_NLast_charged
+DeepFlavourInput_multi_charged
+DeepFlavourInput_charged_Sip3dVal
+DeepFlavourInput_charged_Sip3dSig
+DeepFlavourInput_charged_quality
+DeepFlavourInput_charged_chi2
+# DeepFlavourInput_charged_btagpf_trackEtaRel
+# DeepFlavourInput_charged_btagpf_trackPtRel
+DeepFlavourInput_charged_btagpf_trackPPar
+DeepFlavourInput_charged_btagpf_trackDeltaR
+DeepFlavourInput_charged_btagpf_trackPParRatio
+DeepFlavourInput_charged_btagpf_trackSip2dVal
+DeepFlavourInput_charged_btagpf_trackSip2dSig
+DeepFlavourInput_charged_btagpf_trackSip3dVal
+DeepFlavourInput_charged_btagpf_trackSip3dSig
+DeepFlavourInput_charged_btagpf_trackJetDistVal
+DeepFlavourInput_charged_ptrel
+DeepFlavourInput_charged_drminsv
+DeepFlavourInput_charged_VTX_ass
+DeepFlavourInput_charged_puppiw
+DeepFlavourInput_n_neutral
+DeepFlavourInput_NFirst_neutral
+DeepFlavourInput_NLast_neutral
+DeepFlavourInput_multi_neutral
+DeepFlavourInput_neutral_drminsv
+DeepFlavourInput_neutral_hadFrac
+DeepFlavourInput_neutral_ptrel
+DeepFlavourInput_neutral_deltaR
+DeepFlavourInput_neutral_isGamma
+DeepFlavourInput_neutral_puppiw
+# DeepFlavourInput_n_sv
+DeepFlavourInput_NFirst_sv
+DeepFlavourInput_NLast_sv
+DeepFlavourInput_multi_sv
+DeepFlavourInput_sv_d3d
+DeepFlavourInput_sv_d3dsig
+DeepFlavourInput_sv_normchi2
+# DeepFlavourInput_sv_pt
+# DeepFlavourInput_sv_deltaR
+DeepFlavourInput_sv_mass
+DeepFlavourInput_sv_ntracks
+DeepFlavourInput_sv_chi2
+DeepFlavourInput_sv_dxy
+DeepFlavourInput_sv_dxysig
+DeepFlavourInput_sv_costhetasvpv
+DeepFlavourInput_sv_enratio
+
+
+"""
 
 new_ntuple_keys =  [
                      'Jet_pt',
@@ -232,12 +289,225 @@ new_ntuple_keys =  [
                 	'sv_enratio'
                      ]
 
+btag_analyzer_key_match = {
+                'Jet_pt':'Jet_pt',
+                'Jet_eta':'Jet_eta',
+                'nCpfcand':'DeepFlavourInput_n_charged',
+                'nNpfcand':'DeepFlavourInput_n_neutral',
+                'nsv':'DeepFlavourInput_n_sv',
+                'npv':'DeepFlavourInput_nPVS',
+                'TagVarCSV_jetNSecondaryVertices':'TagVarCSV_jetNSecondaryVertices',
+                'TagVarCSV_trackSumJetEtRatio':'TagVarCSV_trackSumJetEtRatio',
+                'TagVarCSV_trackSumJetDeltaR':'TagVarCSV_trackSumJetDeltaR',
+                'TagVarCSV_vertexCategory':'TagVarCSV_vertexCategory',
+                'TagVarCSV_trackSip2dValAboveCharm':'TagVarCSV_trackSip2dValAboveCharm',
+                'TagVarCSV_trackSip2dSigAboveCharm':'TagVarCSV_trackSip2dSigAboveCharm',
+                'TagVarCSV_trackSip3dValAboveCharm':'TagVarCSV_trackSip3dValAboveCharm',
+                'TagVarCSV_trackSip3dSigAboveCharm':'TagVarCSV_trackSip3dSigAboveCharm',
+                'TagVarCSV_jetNTracksEtaRel':'TagVarCSV_jetNTracksEtaRel',
+                'TagVarCSV_trackEtaRel':'TagVarCSV_trackEtaRel',
+                'TagVarCSV_vertexMass':'TagVarCSV_vertexMass',
+                'TagVarCSV_vertexNTracks':'TagVarCSV_vertexNTracks',
+                'TagVarCSV_vertexEnergyRatio':'TagVarCSV_vertexEnergyRatio',
+                'TagVarCSV_vertexJetDeltaR':'TagVarCSV_vertexJetDeltaR',
+                'TagVarCSV_flightDistance2dVal':'TagVarCSV_flightDistance2dVal',
+                'TagVarCSV_flightDistance2dSig':'TagVarCSV_flightDistance2dSig',
+                'TagVarCSV_flightDistance3dVal':'TagVarCSV_flightDistance3dVal',
+                'TagVarCSV_flightDistance3dSig':'TagVarCSV_flightDistance3dSig',
+                'TagVarCSV_trackDecayLenVal':'TagVarCSV_trackDecayLenVal',
+                'TagVarCSV_trackSip2dSig':'TagVarCSV_trackSip2dSig',
+                'TagVarCSV_trackSip3dSig':'TagVarCSV_trackSip3dSig',
+                'TagVarCSV_trackPtRatio':'TagVarCSV_trackPtRatio',
+                'TagVarCSV_trackDeltaR':'TagVarCSV_trackDeltaR',
+                'TagVarCSV_jetNTracks':'TagVarCSV_jetNTracks',
+                'TagVarCSV_trackPtRel':'TagVarCSV_trackPtRel',
+                'TagVarCSV_trackJetDistVal':'TagVarCSV_trackJetDistVal',
+                'Jet_isUndefined':'Jet_isUndefined',
+                'Jet_isB':'Jet_isB',
+                'Jet_isBB':'Jet_isBB',
+                'Jet_isGBB':'Jet_isGBB',
+                'Jet_isLeptonicB':'Jet_isLeptonicB',
+                'Jet_isLeptonicB_C':'Jet_isLeptonicB_C',
+                'Jet_isC':'Jet_isC',
+                'Jet_isGCC':'Jet_isGCC',
+                'Jet_isCC':'Jet_isCC',
+                'Jet_isUD':'Jet_isUD',
+                'Jet_isG':'Jet_isG',
+                'Jet_isS':'Jet_isS',
+                'Jet_DeepFlavourBDisc':'Jet_DeepFlavourBDisc',
+                'Jet_DeepFlavourCvsLDisc':'Jet_DeepFlavourCvsLDisc',
+                'Jet_DeepFlavourCvsBDisc':'Jet_DeepFlavourCvsBDisc',
+                'Jet_DeepFlavourB':'Jet_DeepFlavourB',
+                'Jet_DeepFlavourBB':'Jet_DeepFlavourBB',
+                'Jet_DeepFlavourLEPB':'Jet_DeepFlavourLEPB',
+                'Jet_DeepFlavourC':'Jet_DeepFlavourC',
+                'Jet_DeepFlavourUDS':'Jet_DeepFlavourUDS',
+                'Jet_DeepFlavourG':'Jet_DeepFlavourG',
+                'Jet_DeepCSVBDisc':'Jet_DeepCSVBDisc',
+                'Jet_DeepCSVBDiscN':'Jet_DeepCSVBDiscN',
+                'Jet_DeepCSVCvsLDisc':'Jet_DeepCSVCvsLDisc',
+                'Jet_DeepCSVCvsLDiscN':'Jet_DeepCSVCvsLDiscN',
+                'Jet_DeepCSVCvsBDisc':'Jet_DeepCSVCvsBDisc',
+                'Jet_DeepCSVCvsBDiscN':'Jet_DeepCSVCvsBDiscN',
+                'Jet_DeepCSVb':'Jet_DeepCSVb',
+                'Jet_DeepCSVc':'Jet_DeepCSVc',
+                'Jet_DeepCSVl':'Jet_DeepCSVl',
+                'Jet_DeepCSVbb':'Jet_DeepCSVbb',
+                'Jet_DeepCSVcc':'Jet_DeepCSVcc',
+                'Jet_DeepCSVbN':'Jet_DeepCSVbN',
+                'Jet_DeepCSVcN':'Jet_DeepCSVcN',
+                'Jet_DeepCSVlN':'Jet_DeepCSVlN',
+                'Jet_DeepCSVbbN':'Jet_DeepCSVbbN',
+                'Jet_DeepCSVccN':'Jet_DeepCSVccN',
+                'Cpfcan_BtagPf_trackEtaRel':'DeepFlavourInput_charged_btagpf_trackEtaRel',
+                'Cpfcan_BtagPf_trackPtRel':'DeepFlavourInput_charged_btagpf_trackPtRel',
+                'Cpfcan_BtagPf_trackPPar':'DeepFlavourInput_charged_btagpf_trackPPar',
+                'Cpfcan_BtagPf_trackDeltaR':'DeepFlavourInput_charged_btagpf_trackDeltaR',
+                'Cpfcan_BtagPf_trackPParRatio':'DeepFlavourInput_charged_btagpf_trackPParRatio',
+                'Cpfcan_BtagPf_trackSip2dVal':'DeepFlavourInput_charged_btagpf_trackSip2dVal',
+                'Cpfcan_BtagPf_trackSip2dSig':'DeepFlavourInput_charged_btagpf_trackSip2dSig',
+                'Cpfcan_BtagPf_trackSip3dVal':'DeepFlavourInput_charged_btagpf_trackSip3dVal',
+                'Cpfcan_BtagPf_trackSip3dSig':'DeepFlavourInput_charged_btagpf_trackSip3dSig',
+                'Cpfcan_BtagPf_trackJetDistVal':'DeepFlavourInput_charged_btagpf_trackJetDistVal',
+                'Cpfcan_ptrel':'DeepFlavourInput_charged_ptrel',
+                'Cpfcan_drminsv':'DeepFlavourInput_charged_drminsv',
+                'Cpfcan_VTX_ass':'DeepFlavourInput_charged_VTX_ass',
+                'Cpfcan_puppiw':'DeepFlavourInput_charged_puppiw',
+                'Cpfcan_chi2':'DeepFlavourInput_charged_chi2',
+                # 'Cpfcan_quality':'DeepFlavourInput_charged_quality',
+                'Npfcan_ptrel':'DeepFlavourInput_neutral_ptrel',
+                'Npfcan_deltaR':'DeepFlavourInput_neutral_deltaR',
+                'Npfcan_isGamma':'DeepFlavourInput_neutral_isGamma',
+                'Npfcan_HadFrac':'DeepFlavourInput_neutral_hadFrac',
+                'Npfcan_drminsv':'DeepFlavourInput_neutral_drminsv',
+                'Npfcan_puppiw':'DeepFlavourInput_neutral_puppiw',
+                'sv_pt':'DeepFlavourInput_sv_pt',
+                'sv_deltaR':'DeepFlavourInput_sv_deltaR',
+                'sv_mass':'DeepFlavourInput_sv_mass',
+                'sv_ntracks':'DeepFlavourInput_sv_ntracks',
+                'sv_chi2':'DeepFlavourInput_sv_chi2',
+                'sv_normchi2':'DeepFlavourInput_sv_normchi2',
+                'sv_dxy':'DeepFlavourInput_sv_dxy',
+                'sv_dxysig':'DeepFlavourInput_sv_dxysig',
+                'sv_d3d':'DeepFlavourInput_sv_d3d',
+                'sv_d3dsig':'DeepFlavourInput_sv_d3dsig',
+                'sv_costhetasvpv':'DeepFlavourInput_sv_costhetasvpv',
+                'sv_enratio':'DeepFlavourInput_sv_enratio'
+}
+
+binning = {
+        'Jet_pt': np.arange(0, 1000, 25),
+        'Jet_eta': np.linspace(-4.2, 4.2, 20),
+        'nCpfcand': np.arange(0, 20, 1),
+        'nNpfcand': np.arange(0, 20, 1),
+        'nsv': np.arange(0, 20, 1),
+        'npv': np.arange(0, 20, 1),
+        'TagVarCSV_jetNSecondaryVertices': np.arange(0, 20, 1),
+        # 'TagVarCSV_trackSumJetEtRatio':'TagVarCSV_trackSumJetEtRatio',
+        # 'TagVarCSV_trackSumJetDeltaR':'TagVarCSV_trackSumJetDeltaR',
+        # 'TagVarCSV_vertexCategory':'TagVarCSV_vertexCategory',
+        # 'TagVarCSV_trackSip2dValAboveCharm':'TagVarCSV_trackSip2dValAboveCharm',
+        # 'TagVarCSV_trackSip2dSigAboveCharm':'TagVarCSV_trackSip2dSigAboveCharm',
+        # 'TagVarCSV_trackSip3dValAboveCharm':'TagVarCSV_trackSip3dValAboveCharm',
+        # 'TagVarCSV_trackSip3dSigAboveCharm':'TagVarCSV_trackSip3dSigAboveCharm',
+        # 'TagVarCSV_jetNTracksEtaRel':'TagVarCSV_jetNTracksEtaRel',
+        # 'TagVarCSV_trackEtaRel':'TagVarCSV_trackEtaRel',
+        # 'TagVarCSV_vertexMass':'TagVarCSV_vertexMass',
+        'TagVarCSV_vertexNTracks': np.arange(0, 20, 1),
+        # 'TagVarCSV_vertexEnergyRatio':'TagVarCSV_vertexEnergyRatio',
+        # 'TagVarCSV_vertexJetDeltaR':'TagVarCSV_vertexJetDeltaR',
+        # 'TagVarCSV_flightDistance2dVal':'TagVarCSV_flightDistance2dVal',
+        # 'TagVarCSV_flightDistance2dSig':'TagVarCSV_flightDistance2dSig',
+        # 'TagVarCSV_flightDistance3dVal':'TagVarCSV_flightDistance3dVal',
+        # 'TagVarCSV_flightDistance3dSig':'TagVarCSV_flightDistance3dSig',
+        # 'TagVarCSV_trackDecayLenVal':'TagVarCSV_trackDecayLenVal',
+        # 'TagVarCSV_trackSip2dSig':'TagVarCSV_trackSip2dSig',
+        # 'TagVarCSV_trackSip3dSig':'TagVarCSV_trackSip3dSig',
+        # 'TagVarCSV_trackPtRatio':'TagVarCSV_trackPtRatio',
+        # 'TagVarCSV_trackDeltaR':'TagVarCSV_trackDeltaR',
+        # 'TagVarCSV_jetNTracks':'TagVarCSV_jetNTracks',
+        # 'TagVarCSV_trackPtRel':'TagVarCSV_trackPtRel',
+        # 'TagVarCSV_trackJetDistVal':'TagVarCSV_trackJetDistVal',
+        # 'Jet_isUndefined':'Jet_isUndefined',
+        'Jet_isB': np.linspace(0, 1, 5),
+        'Jet_isBB': np.linspace(0, 1, 5),
+        'Jet_isGBB': np.linspace(0, 1, 5),
+        'Jet_isLeptonicB': np.linspace(0, 1, 5),
+        'Jet_isLeptonicB_C': np.linspace(0, 1, 5),
+        'Jet_isC': np.linspace(0, 1, 5),
+        'Jet_isGCC': np.linspace(0, 1, 5),
+        'Jet_isCC': np.linspace(0, 1, 5),
+        'Jet_isUD': np.linspace(0, 1, 5),
+        'Jet_isG': np.linspace(0, 1, 5),
+        'Jet_isS': np.linspace(0, 1, 5),
+        'Jet_DeepFlavourBDisc': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourCvsLDisc':np.linspace(0, 1, 20),
+        'Jet_DeepFlavourCvsBDisc':np.linspace(0, 1, 20),
+        'Jet_DeepFlavourB': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourBB': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourLEPB': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourC': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourUDS': np.linspace(0, 1, 20),
+        'Jet_DeepFlavourG': np.linspace(0, 1, 20),
+        'Jet_DeepCSVBDisc': np.linspace(0, 1, 20),
+        'Jet_DeepCSVBDiscN': np.linspace(0, 1, 20),
+        'Jet_DeepCSVCvsLDisc': np.linspace(0, 1, 20),
+        'Jet_DeepCSVCvsLDiscN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVCvsBDisc':np.linspace(0, 1, 20),
+        'Jet_DeepCSVCvsBDiscN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVb':np.linspace(0, 1, 20),
+        'Jet_DeepCSVc':np.linspace(0, 1, 20),
+        'Jet_DeepCSVl':np.linspace(0, 1, 20),
+        'Jet_DeepCSVbb':np.linspace(0, 1, 20),
+        'Jet_DeepCSVcc':np.linspace(0, 1, 20),
+        'Jet_DeepCSVbN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVcN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVlN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVbbN':np.linspace(0, 1, 20),
+        'Jet_DeepCSVccN':np.linspace(0, 1, 20),
+        # 'Cpfcan_BtagPf_trackEtaRel':'DeepFlavourInput_charged_btagpf_trackEtaRel',
+        # 'Cpfcan_BtagPf_trackPtRel':'DeepFlavourInput_charged_btagpf_trackPtRel',
+        # 'Cpfcan_BtagPf_trackPPar':'DeepFlavourInput_charged_btagpf_trackPPar',
+        # 'Cpfcan_BtagPf_trackDeltaR':'DeepFlavourInput_charged_btagpf_trackDeltaR',
+        # 'Cpfcan_BtagPf_trackPParRatio':'DeepFlavourInput_charged_btagpf_trackPParRatio',
+        # 'Cpfcan_BtagPf_trackSip2dVal':'DeepFlavourInput_charged_btagpf_trackSip2dVal',
+        # 'Cpfcan_BtagPf_trackSip2dSig':'DeepFlavourInput_charged_btagpf_trackSip2dSig',
+        # 'Cpfcan_BtagPf_trackSip3dVal':'DeepFlavourInput_charged_btagpf_trackSip3dVal',
+        # 'Cpfcan_BtagPf_trackSip3dSig':'DeepFlavourInput_charged_btagpf_trackSip3dSig',
+        # 'Cpfcan_BtagPf_trackJetDistVal':'DeepFlavourInput_charged_btagpf_trackJetDistVal',
+        # 'Cpfcan_ptrel':'DeepFlavourInput_charged_ptrel',
+        # 'Cpfcan_drminsv':'DeepFlavourInput_charged_drminsv',
+        # 'Cpfcan_VTX_ass':'DeepFlavourInput_charged_VTX_ass',
+        # 'Cpfcan_puppiw':'DeepFlavourInput_charged_puppiw',
+        # 'Cpfcan_chi2':'DeepFlavourInput_charged_chi2',
+        # 'Cpfcan_quality':'DeepFlavourInput_charged_quality',
+        # 'Npfcan_ptrel':'DeepFlavourInput_neutral_ptrel',
+        # 'Npfcan_deltaR':'DeepFlavourInput_neutral_deltaR',
+        # 'Npfcan_isGamma':'DeepFlavourInput_neutral_isGamma',
+        # 'Npfcan_HadFrac':'DeepFlavourInput_neutral_hadFrac',
+        # 'Npfcan_drminsv':'DeepFlavourInput_neutral_drminsv',
+        # 'Npfcan_puppiw':'DeepFlavourInput_neutral_puppiw',
+        # 'sv_pt':'DeepFlavourInput_sv_pt',
+        # 'sv_deltaR':'DeepFlavourInput_sv_deltaR',
+        # 'sv_mass':'DeepFlavourInput_sv_mass',
+        # 'sv_ntracks':'DeepFlavourInput_sv_ntracks',
+        # 'sv_chi2':'DeepFlavourInput_sv_chi2',
+        # 'sv_normchi2':'DeepFlavourInput_sv_normchi2',
+        # 'sv_dxy':'DeepFlavourInput_sv_dxy',
+        # 'sv_dxysig':'DeepFlavourInput_sv_dxysig',
+        # 'sv_d3d':'DeepFlavourInput_sv_d3d',
+        # 'sv_d3dsig':'DeepFlavourInput_sv_d3dsig',
+        # 'sv_costhetasvpv':'DeepFlavourInput_sv_costhetasvpv',
+        # 'sv_enratio':'DeepFlavourInput_sv_enratio'
+
+}
+
 default_values = {
         # 'nCpfcand' : {"old": -9999., "new": -999.},
         # 'nNpfcand' : {"old": -9999., "new": -999.},
          # 'nsv' : {"old": -9999., "new": -999.},
          # 'npv' : {"old": -9999., "new": -999.},
-         # 'TagVarCSV_jetNSecondaryVertices' : {"old": -9999., "new": -999.},
+         'TagVarCSV_jetNSecondaryVertices' : {"old": -9999., "new": 0.},
 
          'TagVarCSV_trackSumJetEtRatio' : {"old": -9999., "new": -999.},
          'TagVarCSV_trackSumJetDeltaR' : {"old": -9999., "new": -999.},
@@ -248,11 +518,11 @@ default_values = {
          'TagVarCSV_trackSip3dSigAboveCharm' : {"old": -9999., "new": -999.},
          'TagVarCSV_jetNTracksEtaRel' : {"old": -9999., "new": -1.},
 
-         # 'TagVarCSV_trackEtaRel' : {"old": -9999., "new": -999.},
-         # 'TagVarCSV_vertexMass' : {"old": -9999., "new": -999.},
-         # 'TagVarCSV_vertexNTracks' : {"old": -9999., "new": -999.},
-         # 'TagVarCSV_vertexEnergyRatio' : {"old": -9999., "new": -999.},
-         # 'TagVarCSV_vertexJetDeltaR' : {"old": -9999., "new": -999.},
+         'TagVarCSV_trackEtaRel' : {"old": -9999., "new": -999.},
+         'TagVarCSV_vertexMass' : {"old": -9999., "new": -999.},
+         'TagVarCSV_vertexNTracks' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexEnergyRatio' : {"old": -9999., "new": -999.},
+         'TagVarCSV_vertexJetDeltaR' : {"old": -9999., "new": -999.},
 
          'TagVarCSV_flightDistance2dVal' : {"old": -9999., "new": -999.},
          'TagVarCSV_flightDistance2dSig' : {"old": -9999., "new": -999.},
@@ -326,6 +596,99 @@ default_values = {
         # 'Npfcan_drminsv' : {"old": -9999., "new": -999.},
         }
 
+default_values_CSV = {
+        # 'nCpfcand' : {"old": -9999., "new": 0.},
+        # 'nNpfcand' : {"old": -9999., "new": 0.},
+         # 'nsv' : {"old": -9999., "new": 0.},
+         # 'npv' : {"old": -9999., "new": 0.},
+         'TagVarCSV_jetNSecondaryVertices' : {"old": -9999., "new": 0.},
+
+         'TagVarCSV_trackSumJetEtRatio' : {"old": -9999., "new": 0.},
+         'TagVarCSV_trackSumJetDeltaR' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexCategory' : {"old": -9999., "new": 0.},
+         'TagVarCSV_trackSip2dValAboveCharm' : {"old": -9999., "new": 0.},
+         'TagVarCSV_trackSip2dSigAboveCharm' : {"old": -9999., "new": 0.},
+         'TagVarCSV_trackSip3dValAboveCharm' : {"old": -9999., "new": 0.},
+         'TagVarCSV_trackSip3dSigAboveCharm' : {"old": -9999., "new": 0.},
+         'TagVarCSV_jetNTracksEtaRel' : {"old": -9999., "new": -1.},
+
+         'TagVarCSV_trackEtaRel' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexMass' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexNTracks' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexEnergyRatio' : {"old": -9999., "new": 0.},
+         'TagVarCSV_vertexJetDeltaR' : {"old": -9999., "new": 0.},
+
+         'TagVarCSV_flightDistance2dVal' : {"old": -9999., "new": 0.},
+         'TagVarCSV_flightDistance2dSig' : {"old": -9999., "new": 0.},
+         'TagVarCSV_flightDistance3dVal' : {"old": -9999., "new": 0.},
+         'TagVarCSV_flightDistance3dSig' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackDecayLenVal' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackSip2dSig' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackSip3dSig' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackPtRatio' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackDeltaR' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_jetNTracks' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackPtRel' : {"old": -9999., "new": 0.},
+         # 'TagVarCSV_trackJetDistVal' : {"old": -9999., "new": 0.},
+         # 'Jet_isUndefined' : {"old": -9999., "new": 0.},
+         # 'Jet_isB' : {"old": -9999., "new": 0.},
+         # 'Jet_isBB' : {"old": -9999., "new": 0.},
+         # 'Jet_isGBB' : {"old": -9999., "new": 0.},
+         # 'Jet_isLeptonicB' : {"old": -9999., "new": 0.},
+         # 'Jet_isLeptonicB_C' : {"old": -9999., "new": 0.},
+         # 'Jet_isC' : {"old": -9999., "new": 0.},
+         # 'Jet_isGCC' : {"old": -9999., "new": 0.},
+         # 'Jet_isCC' : {"old": -9999., "new": 0.},
+         # 'Jet_isUD' : {"old": -9999., "new": 0.},
+         # 'Jet_isG' : {"old": -9999., "new": 0.},
+         # 'Jet_isS' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourBDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourCvsLDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourCvsBDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourB' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourBB' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourLEPB' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourC' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourUDS' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepFlavourG' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVBDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVBDiscN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVCvsLDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVCvsLDiscN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVCvsBDisc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVCvsBDiscN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVb' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVl' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVbb' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVcc' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVbN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVcN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVlN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVbbN' : {"old": -9999., "new": 0.},
+         # 'Jet_DeepCSVccN' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackEtaRel' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackPtRel' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackPPar' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackDeltaR' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackPParRatio' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackSip2dVal' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackSip2dSig' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackSip3dVal' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackSip3dSig' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_BtagPf_trackJetDistVal' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_ptrel' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_drminsv' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_VTX_ass' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_puppiw' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_chi2' : {"old": -9999., "new": 0.},
+        # 'Cpfcan_quality' : {"old": -9999., "new": 0.},
+        # 'Npfcan_ptrel' : {"old": -9999., "new": 0.},
+        # 'Npfcan_deltaR' : {"old": -9999., "new": 0.},
+        # 'Npfcan_isGamma' : {"old": -9999., "new": 0.},
+        # 'Npfcan_HadFrac' : {"old": -9999., "new": 0.},
+        # 'Npfcan_drminsv' : {"old": -9999., "new": 0.},
+        }
 
 key_lookup = {
     'Jet_pt': 'Jet_pt',

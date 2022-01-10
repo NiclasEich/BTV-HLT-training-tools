@@ -5,7 +5,7 @@ import onnx
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--infile", "-i", help="Input model", type=str)
-parser.add_argument("--outfile", "-o", help="Output path", type=bool, default=False)
+parser.add_argument("--outfile", "-o", help="Output path", type=str)
 args = parser.parse_args()
 
 keras_model = keras.models.load_model(args.infile, compile=False)
