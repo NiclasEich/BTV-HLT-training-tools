@@ -1,6 +1,5 @@
 import os
-import uproot3
-import uproot as ur
+import uproot3 as ur
 import matplotlib
 import matplotlib.pyplot as plt
 import argparse
@@ -52,14 +51,14 @@ _params = {
 plt.rcParams.update(_params)
 
 file_name = os.path.join(args.inp, "ROCS_DeepCSV.root")
-tree = uproot3.open( file_name)
+tree = ur.open( file_name)
 
 roc_0 = tree["roccurve_0"]
 roc_1 = tree["roccurve_1"]
 roc_2 = tree["roccurve_2"]
 roc_3 = tree["roccurve_3"]
 
-# roc_old = uproot3.open( "/nfs/dust/cms/user/neich/BTV/Trainings/DeepJet_prod_05_pred/ROCS_DeepCSV.root")["roccurve_0"]
+# roc_old = ur.open( "/nfs/dust/cms/user/neich/BTV/Trainings/DeepJet_prod_05_pred/ROCS_DeepCSV.root")["roccurve_0"]
 
 if not(args.deepCSV):
     roc_4 = tree["roccurve_4"]
@@ -92,12 +91,12 @@ if not(args.deepCSV):
 offline evaluated models
 """
 with ur.open("/nfs/dust/cms/user/neich/BTV/DeepJet_ttBarHad_30pt.root") as f:
-    x_offline_DeepJet_light, y_offline_DeepJet_light = f["roccurve_0"].values()
-    x_offline_DeepJet_charm, y_offline_DeepJet_charm= f["roccurve_1"].values()
+    x_offline_DeepJet_light, y_offline_DeepJet_light = f["roccurve_0"].xvalues, f["roccurve_0"].yvalues
+    x_offline_DeepJet_charm, y_offline_DeepJet_charm= f["roccurve_1"].xvalues, f["roccurve_1"].yvalues
 
 with ur.open("/nfs/dust/cms/user/neich/BTV/DeepCSV_ttBarHad_30pt.root") as f:
-    x_offline_DeepCSV_light, y_offline_DeepCSV_light = f["roccurve_0"].values()
-    x_offline_DeepCSV_charm, y_offline_DeepCSV_charm= f["roccurve_1"].values()
+    x_offline_DeepCSV_light, y_offline_DeepCSV_light = f["roccurve_0"].xvalues, f["roccurve_0"].yvalues
+    x_offline_DeepCSV_charm, y_offline_DeepCSV_charm= f["roccurve_1"].xvalues, f["roccurve_1"].yvalues
 
 fig, ax = plt.subplots(1, 1, figsize=(15, 10))
 ax.plot(x_offline_DeepCSV_light, y_offline_DeepCSV_light, label="b vs udsg DeepCSV Off-Off", color="green")
@@ -119,8 +118,8 @@ ax.xaxis.set_ticks_position('both')
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.set_ylabel("misid. prob.")
 ax.set_yscale("log")
-ax.set_xlim(0.4, 1.)
-ax.set_ylim(9.*1e-4, 1.)
+ax.set_xlim(0.01, 1.)
+ax.set_ylim(9.*1e-5, 1.)
 ax.grid(True, "both", linestyle="dashed")
 ax.legend()
 fig.savefig(os.path.join(out_dir, f"{tag}_roc_curve_all.png"))
@@ -142,8 +141,8 @@ ax.xaxis.set_ticks_position('both')
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.set_ylabel("misid. prob.")
 ax.set_yscale("log")
-ax.set_xlim(0.4, 1.)
-ax.set_ylim(9.*1e-4, 1.)
+ax.set_xlim(0.01, 1.)
+ax.set_ylim(9.*1e-5, 1.)
 ax.grid(True, "both", linestyle="dashed")
 ax.legend()
 fig.savefig(os.path.join(out_dir, f"{tag}roc_curve_light.png"))
@@ -163,8 +162,8 @@ ax.xaxis.set_ticks_position('both')
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.set_ylabel("misid. prob.")
 ax.set_yscale("log")
-ax.set_xlim(0.4, 1.)
-ax.set_ylim(9.*1e-4, 1.)
+ax.set_xlim(0.01, 1.)
+ax.set_ylim(9.*1e-5, 1.)
 ax.grid(True, "both", linestyle="dashed")
 ax.legend()
 fig.savefig(os.path.join(out_dir, f"{tag}roc_curve_light_deepJet.png"))
@@ -184,8 +183,8 @@ ax.xaxis.set_ticks_position('both')
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.set_ylabel("misid. prob.")
 ax.set_yscale("log")
-ax.set_xlim(0.4, 1.)
-ax.set_ylim(9.*1e-4, 1.)
+ax.set_xlim(0.01, 1.)
+ax.set_ylim(9.*1e-5, 1.)
 ax.grid(True, "both", linestyle="dashed")
 ax.legend()
 fig.savefig(os.path.join(out_dir, f"{tag}roc_curve_charm.png"))
