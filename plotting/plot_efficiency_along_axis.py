@@ -1,5 +1,5 @@
 import os
-import uproot as ur
+import uproot3 as ur
 import numpy as np
 import matplotlib as mpl
 mpl.use('Agg')
