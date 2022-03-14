@@ -12,4 +12,4 @@ Request_Memory = 4 Gb
 request_GPUs = 0
 request_CPUs = 1
 +RequestRuntime = 7200
-queue 7
+queue 8
