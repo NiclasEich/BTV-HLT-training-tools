@@ -113,8 +113,11 @@ else:
     online_jet_pt = online_tree["Jet_pt"].array()
     online_jet_npfc = online_tree[key_lookup["nCpfcand"]].array()
 
+nsv_mask = np.logical_not( np.logical_and(online_tree["nSV"].array() == 0, awkward.count(online_tree["TagVarCSV_jetNTracks"].array(), axis=-1) == 0))
+
 on_mask = (online_jet_pt > 25.) & (online_jet_pt < 1000.)
-on_mask = on_mask & online_jet_npfc > -1
+# on_mask = on_mask & online_jet_npfc > -1
+on_mask = on_mask & nsv_mask
 
 
 n_total = len(online_tree["Jet_pt"].array()[on_mask].flatten())
