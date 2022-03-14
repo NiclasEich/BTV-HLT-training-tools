@@ -7,7 +7,7 @@ MPLuse("agg")
 
 def compute_ratios(hist_a, hist_b, bin_edges):
     r_a = hist_a / np.sum(hist_b)
-    r_b = hist_a / np.sum(hist_b)
+    r_b = hist_b / np.sum(hist_b)
     ratios = r_a / (r_b + 1e-9)
 
     bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
