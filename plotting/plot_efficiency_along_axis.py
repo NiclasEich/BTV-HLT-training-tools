@@ -141,22 +141,27 @@ def eff_along_files(file_list, bins, key, deepCSV=False):
     for root_file in file_list:
         print("Opening {}".format(root_file))
 
-        with ur.open(root_file) as f:
-            tree = f["tree"]
-            if deepCSV is True:
-                b_jets = tree["Jet_isB"].array() + tree["Jet_isBB"].array()
-                disc = tree["prob_isB"].array() + tree["prob_isBB"].array()
-            else:
-                b_jets = tree["Jet_isB"].array() + tree["Jet_isBB"].array() + tree["Jet_isLeptB"].array()
-                disc = tree["prob_isB"].array() + tree["prob_isBB"].array() + tree["prob_isLeptB"].array()
-            disc_bjets = disc[ np.where(b_jets) ]
-            x_roc, y_roc = get_roc(tree, deepCSV)
-            ret_dict = eff_along_axis(tree, key, bins, x_roc, y_roc, b_jets, disc_bjets)
+        try:
+            with ur.open(root_file) as f:
+                tree = f["tree"]
+                if deepCSV is True:
+                    b_jets = tree["Jet_isB"].array() + tree["Jet_isBB"].array()
+                    disc = tree["prob_isB"].array() + tree["prob_isBB"].array()
+                else:
+                    b_jets = tree["Jet_isB"].array() + tree["Jet_isBB"].array() + tree["Jet_isLeptB"].array()
+                    disc = tree["prob_isB"].array() + tree["prob_isBB"].array() + tree["prob_isLeptB"].array()
+                disc_bjets = disc[ np.where(b_jets) ]
+                x_roc, y_roc = get_roc(tree, deepCSV)
+                ret_dict = eff_along_axis(tree, key, bins, x_roc, y_roc, b_jets, disc_bjets)
 
-            effs_tight.append( ret_dict["tight"] )
-            effs_medium.append( ret_dict["medium"] )
-            effs_lose.append( ret_dict["lose"] )
-            n_events.append( ret_dict["n"] )
+                effs_tight.append( ret_dict["tight"] )
+                effs_medium.append( ret_dict["medium"] )
+                effs_lose.append( ret_dict["lose"] )
+                n_events.append( ret_dict["n"] )
+        except IndexError as e:
+            print(e)
+            print("Failed!")
+            pass
     res = {
         "tight": np.average(effs_tight, weights=n_events, axis=0),
         "medium": np.average(effs_medium, weights=n_events, axis=0),
@@ -180,7 +185,7 @@ def plot_effs(file_list, bins, key, out_path, tagger_label, deepCSV=False):
     ax.legend(fontsize=25)
     ax.set_xlabel(f"{key}", fontsize=25)
     ax.set_title(f"{tagger_label} b-jet id. effic. per {key}", fontsize=25)
-    path = os.path.join( out_path, f"b_eff_{key}.png")
+    path = os.path.join( out_path, f"b_eff_{key}.pdf")
     print(f"Saving figure to {path}")
     fig.savefig( path )
 
@@ -304,7 +309,7 @@ if __name__ == "__main__":
 # ax.legend(fontsize=25)
 # ax.set_xlabel("$p_T$[GeV]", fontsize=25)
 # ax.set_title("b-jet id. effic. per $p_T$", fontsize=25)
-# fig.savefig( os.path.join( out_path, "b_eff_pt.png") )
+# fig.savefig( os.path.join( out_path, "b_eff_pt.pdf") )
 
 # fig, ax = plt.subplots(1, 1, figsize=(15, 10))
 # ax.errorbar( bin_centers_eta, effs_eta_lose_total[1:], yerr=err_eta_lose[1:], marker="*",fmt="",  linestyle="dashed", label="b-jet id. eff. lose")
@@ -313,4 +318,4 @@ if __name__ == "__main__":
 # ax.legend(fontsize=25)
 # ax.set_xlabel("$\eta$", fontsize=25)
 # ax.set_title("b-jet id. effic. per $\eta$", fontsize=25)
-# fig.savefig( os.path.join( out_path, "b_eff_eta.png") )
+# fig.savefig( os.path.join( out_path, "b_eff_eta.pdf") )
