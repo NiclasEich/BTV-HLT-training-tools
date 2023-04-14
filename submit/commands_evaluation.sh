@@ -8,19 +8,25 @@ echo "Pythonpath:"
 echo $PYTHONPATH
 echo "current path:"
 pwd
-echo "$BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/$TrainingVersion/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles $TrainingOutput/${TrainingVersion}_pred -b 1000"
+echo "$BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/$TrainingVersion/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles $TrainingOutput/${TrainingVersion}_pred -b 10000"
 mkdir $TrainingOutput/${TrainingVersion}_pred
 
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles_QCD $TrainingOutput/${TrainingVersion}_pred/QCD -b 1000
+echo "Evaluating QCD"
+python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles_QCD $TrainingOutput/${TrainingVersion}_pred/QCD -b 10000
 python3 $BTVHLTToolsDirectory/DeepJet/scripts/plot_roc.py --input_dir $TrainingOutput/${TrainingVersion}_pred/QCD
 python3 $BTVHLTToolsDirectory/plotting/plot_roc.py -i $TrainingOutput/${TrainingVersion}_pred/QCD -o $TrainingOutput/${TrainingVersion}_pred --tag QCD
 
 
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles_ttbar $TrainingOutput/${TrainingVersion}_pred/ttbar -b 1000
+echo "Evaluating TTbar"
+python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles_ttbar $TrainingOutput/${TrainingVersion}_pred/ttbar -b 10000
 python3 $BTVHLTToolsDirectory/DeepJet/scripts/plot_roc.py --input_dir $TrainingOutput/${TrainingVersion}_pred/ttbar
 python3 $BTVHLTToolsDirectory/plotting/plot_roc.py -i $TrainingOutput/${TrainingVersion}_pred/ttbar -o $TrainingOutput/${TrainingVersion}_pred --tag ttbar
 
-python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles $TrainingOutput/${TrainingVersion}_pred/all -b 1000
+echo "Merging Results"
+mkdir $TrainingOutput/${TrainingVersion}_pred/all
+cp $TrainingOutput/${TrainingVersion}_pred/QCD/*.root  $TrainingOutput/${TrainingVersion}_pred/all/*.root
+cp $TrainingOutput/${TrainingVersion}_pred/ttbar/*.root  $TrainingOutput/${TrainingVersion}_pred/all/*.root
+# python3 $BTVHLTToolsDirectory/DeepJetCore/bin/predict.py $TrainingOutput/${TrainingVersion}/KERAS_check_best_model.h5 $OnlineTrainingFiles $OnlineEvaluationFiles $TrainingOutput/${TrainingVersion}_pred/all -b 10000
 python3 $BTVHLTToolsDirectory/DeepJet/scripts/plot_roc.py --input_dir $TrainingOutput/${TrainingVersion}_pred/all
 python3 $BTVHLTToolsDirectory/plotting/plot_roc.py -i $TrainingOutput/${TrainingVersion}_pred/all -o $TrainingOutput/${TrainingVersion}_pred --tag all
 

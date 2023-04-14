@@ -4,3 +4,6 @@
 [submodule "DeepJetCore"]
 	path = DeepJetCore
 	url = https://github.com/NiclasEich/DeepJetCore.git 
+[submodule "lwtnn"]
+    path = DeepCSV_conversion/lwtnn
+	url = https://github.com/lwtnn/lwtnn.git

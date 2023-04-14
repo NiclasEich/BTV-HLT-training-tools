@@ -14,7 +14,8 @@ export PYTHONPATH=$PYTHONPATH:/afs/desy.de/user/n/neich/.local/lib/python3.6/sit
 export PYTHONPATH=$PYTHONPATH:/lib/python3.6/site-packages/
 export PYTHONPATH=$PYTHONPATH:/usr/local/lib/
 
-export LD_LIBRARY_PATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/share/DJC/DeepJetCore/compiled:$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=$BTVHLTToolsDirectory/DeepJetCore/compiled:$LD_LIBRARY_PATH
 
 if test -f "$BTVHLTToolsDirectory/local_setup.sh";
 then
