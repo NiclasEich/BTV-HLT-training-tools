@@ -9,5 +9,4 @@ when_to_transfer_output = ON_EXIT
 request_GPUs = 1
 request_CPUs = 1
 Request_Memory = 16 Gb
-+RequestRuntime = 345600
 queue

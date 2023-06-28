@@ -19,7 +19,7 @@ export LD_LIBRARY_PATH=/usr/share/DJC/DeepJetCore/compiled:$LD_LIBRARY_PATH
 
 if test -f "$BTVHLTToolsDirectory/local_setup.sh";
 then
-    source local_setup.sh
+    source $BTVHLTToolsDirectory/local_setup.sh
 else
     echo "No local_setup.sh found! Using defaults for env vars"
 fi
@@ -37,7 +37,3 @@ then
       fi
       echo "\$TrainingOutput set to ${TrainingOutput}"
 fi
-
-# mkdir -p ${OnlineDirectory}
-# mkdir -p ${TrainingOutput}
-# mkdir -p /nfs/dust/cms/user/sewuchte/BTV/Run3/Niclas_TrainingSetup/BTV-HLT-training-tools/Trainings/djdc_files/
